@@ -10,6 +10,15 @@ local defaults = {
       show_notification = true,
       cache_results = true,
     },
+    build_runner = {
+      enabled = true,
+      auto_save = true,
+      show_output = true,
+      output_position = "botright",
+      output_height = 15,
+      close_on_success = false,
+      focus_on_open = false,
+    },
     -- Add more features here as they are implemented
   },
   log_level = "info",

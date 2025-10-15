@@ -13,6 +13,16 @@ function M.load()
     end
   end
 
+  -- Load build_runner if enabled
+  if config.is_feature_enabled("build_runner") then
+    local ok, build_runner = pcall(require, "swift.features.build_runner")
+    if ok then
+      build_runner.setup(config.get_feature("build_runner"))
+    else
+      vim.notify("Failed to load build_runner: " .. tostring(build_runner), vim.log.levels.ERROR)
+    end
+  end
+
   -- Add more features here as they are implemented
   -- Example:
   -- if config.is_feature_enabled("your_feature") then

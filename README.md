@@ -146,6 +146,15 @@ EOF
       show_notification = true,    -- Show notification when project detected
       cache_results = true,        -- Cache detection results
     },
+    build_runner = {
+      enabled = true,
+      auto_save = true,            -- Save all files before building
+      show_output = true,          -- Show output in split window
+      output_position = "botright", -- Position of output window
+      output_height = 15,          -- Height of output window
+      close_on_success = false,    -- Auto-close on successful build
+      focus_on_open = false,       -- Focus output window when opened
+    },
     -- Add more features here as they are implemented
   },
   log_level = "info",
@@ -308,11 +317,60 @@ local info = detector.get_project_info()
 -- Returns: { type = "spm"|"xcode_project"|"xcode_workspace"|"none", root = "/path", ... }
 ```
 
+### Build Runner
+
+Build, run, and test Swift Package Manager projects directly from Neovim.
+
+**Features:**
+- Build Swift packages with debug/release configurations
+- Run Swift executables with custom arguments
+- Execute tests with filtering support
+- Clean build artifacts
+- Live output in split window
+- Auto-save before building
+
+**Commands:**
+- `:SwiftBuild [debug|release]` - Build the Swift package
+- `:SwiftRun [args]` - Run the Swift package
+- `:SwiftTest [args]` - Run Swift tests
+- `:SwiftClean` - Clean build artifacts
+- `:SwiftBuildClose` - Close build output window
+
+**Configuration:**
+```lua
+features = {
+  build_runner = {
+    enabled = true,
+    auto_save = true,              -- Save all files before building
+    show_output = true,            -- Show output in split window
+    output_position = "botright",  -- Position: botright, belowright, etc
+    output_height = 15,            -- Height of output window
+    close_on_success = false,      -- Auto-close on successful build
+    focus_on_open = false,         -- Focus output window when opened
+  },
+}
+```
+
+**Keybindings (example):**
+```lua
+keys = {
+  { "<leader>sb", "<cmd>SwiftBuild<cr>", desc = "Swift build" },
+  { "<leader>sr", "<cmd>SwiftRun<cr>", desc = "Swift run" },
+  { "<leader>st", "<cmd>SwiftTest<cr>", desc = "Swift test" },
+  { "<leader>sc", "<cmd>SwiftClean<cr>", desc = "Swift clean" },
+}
+```
+
 ## Commands
 
 - `:SwiftInfo` - Show plugin information and current configuration
 - `:SwiftDetectProject` - Detect and show Swift project type
 - `:SwiftProjectInfo` - Show current Swift project information
+- `:SwiftBuild [debug|release]` - Build Swift package
+- `:SwiftRun [args]` - Run Swift package
+- `:SwiftTest [args]` - Run Swift tests
+- `:SwiftClean` - Clean build artifacts
+- `:SwiftBuildClose` - Close build output window
 
 ## Health Check
 
