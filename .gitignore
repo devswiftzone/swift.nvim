@@ -1,0 +1,24 @@
+# Neovim
+*.sw[a-z]
+*~
+tags
+.DS_Store
+
+# Lua
+luac.out
+
+# Testing
+.tests/
+.luacov
+*.out
+*.log
+
+# Documentation build
+doc/tags
+
+# Plugin manager
+.repro/
+
+# Misc
+.envrc
+.direnv/
