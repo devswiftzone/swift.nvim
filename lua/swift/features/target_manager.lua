@@ -372,6 +372,8 @@ function M.get_lualine_parts()
   -- icono para SPM (puedes cambiarlo)
   local spm_icon = " " -- o "󰛥 "
 
+  print(info.project_name)
+
   if info.project_type == "spm" then
     return {
       icon    = spm_icon,
