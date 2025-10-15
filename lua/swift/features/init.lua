@@ -63,6 +63,16 @@ function M.load()
     end
   end
 
+  -- Load target_manager if enabled
+  if config.is_feature_enabled("target_manager") then
+    local ok, target_manager = pcall(require, "swift.features.target_manager")
+    if ok then
+      target_manager.setup(config.get_feature("target_manager"))
+    else
+      vim.notify("Failed to load target_manager: " .. tostring(target_manager), vim.log.levels.ERROR)
+    end
+  end
+
   -- Add more features here as they are implemented
   -- Example:
   -- if config.is_feature_enabled("your_feature") then

@@ -248,6 +248,40 @@ function M.check()
   else
     health.info("Xcode feature is disabled")
   end
+
+  -- Check Target Manager
+  health.start("Target Manager")
+  if config.is_feature_enabled("target_manager") then
+    local tm_ok, target_manager = pcall(require, "swift.features.target_manager")
+    if tm_ok then
+      health.ok("Target manager available")
+
+      -- Check if we can detect targets
+      local targets = target_manager.get_targets()
+      if #targets > 0 then
+        health.ok(string.format("Found %d target(s)", #targets))
+
+        local current = target_manager.get_current_target()
+        if current then
+          health.info("Current target: " .. current)
+        end
+
+        -- Show target types
+        local type_counts = {}
+        for _, target in ipairs(targets) do
+          type_counts[target.type] = (type_counts[target.type] or 0) + 1
+        end
+
+        for target_type, count in pairs(type_counts) do
+          health.info(string.format("  %s: %d", target_type, count))
+        end
+      else
+        health.info("No targets found (open a Swift project to see targets)")
+      end
+    end
+  else
+    health.info("Target manager feature is disabled")
+  end
 end
 
 return M

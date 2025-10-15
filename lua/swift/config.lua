@@ -52,6 +52,10 @@ local defaults = {
       output_position = "botright",
       output_height = 15,
     },
+    target_manager = {
+      enabled = true,
+      cache_timeout = 60, -- Cache targets for 60 seconds
+    },
     -- Add more features here as they are implemented
   },
   log_level = "info",

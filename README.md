@@ -468,6 +468,83 @@ features = {
 - `sourcekit-lsp` - Swift LSP server (comes with Xcode or Swift toolchain)
 - `nvim-cmp` (optional) - For better completions
 
+### Target Manager
+
+Detect and manage Swift targets from Package.swift and Xcode projects. Perfect for statusline integration.
+
+**Features:**
+- Parse targets from Package.swift (executable, library, test targets)
+- Extract schemes and targets from Xcode projects
+- Select active target with `vim.ui.select`
+- Statusline integration with LuaLine (see examples)
+- Cached results for performance
+
+**Commands:**
+- `:SwiftTargets` - List all available targets in the project
+- `:SwiftSelectTarget` - Select a target with interactive picker
+- `:SwiftCurrentTarget` - Show currently selected target
+
+**Configuration:**
+```lua
+features = {
+  target_manager = {
+    enabled = true,
+    cache_timeout = 60,  -- Cache targets for 60 seconds
+  },
+}
+```
+
+**API:**
+```lua
+local tm = require("swift.features.target_manager")
+
+-- Get all targets
+local targets = tm.get_targets()
+-- Returns: { { name = "MyApp", type = "executable" }, ... }
+
+-- Get target names only
+local names = tm.get_target_names()
+-- Returns: { "MyApp", "MyLibrary", "MyTests" }
+
+-- Get executable targets only
+local executables = tm.get_executable_targets()
+
+-- Get/set current target
+local current = tm.get_current_target()
+tm.set_current_target("MyApp")
+
+-- Get info for statusline
+local info = tm.get_statusline_info()
+-- Returns: { project_type = "spm", current_target = "MyApp", total_targets = 3 }
+```
+
+**LuaLine Integration:**
+```lua
+-- Simple target display
+require("lualine").setup({
+  sections = {
+    lualine_x = {
+      {
+        function()
+          local ok, tm = pcall(require, "swift.features.target_manager")
+          if ok and vim.bo.filetype == "swift" then
+            return tm.statusline_simple()
+          end
+          return ""
+        end,
+        icon = "󰛥",
+        color = { fg = "#ff6b00" },
+      },
+      "encoding",
+      "fileformat",
+      "filetype",
+    },
+  },
+})
+```
+
+**For complete LuaLine examples**, see [examples/lualine-integration.lua](./examples/lualine-integration.lua) with 10+ integration examples.
+
 ## Commands
 
 ### General
@@ -495,6 +572,11 @@ features = {
 - `:SwiftXcodeBuild [scheme]` - Build Xcode project
 - `:SwiftXcodeSchemes` - List available schemes
 - `:SwiftXcodeOpen` - Open in Xcode.app
+
+### Targets
+- `:SwiftTargets` - List all Swift targets
+- `:SwiftSelectTarget` - Select target with picker
+- `:SwiftCurrentTarget` - Show current target
 
 ## Health Check & Validation
 
@@ -648,6 +730,7 @@ See the `examples/` directory for complete configuration examples:
 - `lazyvim-config.lua` - Full LazyVim integration with LSP, Treesitter, etc.
 - `local-dev-config.lua` - Setup for plugin development
 - `advanced-config.lua` - Advanced usage with custom commands and autocommands
+- `lualine-integration.lua` - 10+ examples for LuaLine statusline integration with Swift targets
 
 ## Development
 
