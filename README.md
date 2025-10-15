@@ -155,6 +155,15 @@ EOF
       close_on_success = false,    -- Auto-close on successful build
       focus_on_open = false,       -- Focus output window when opened
     },
+    lsp = {
+      enabled = true,
+      auto_setup = true,           -- Automatically setup LSP
+      sourcekit_path = nil,        -- Auto-detect
+      inlay_hints = true,          -- Enable inlay hints
+      semantic_tokens = true,      -- Enable semantic tokens
+      on_attach = nil,             -- Custom on_attach
+      capabilities = nil,          -- Custom capabilities
+    },
     -- Add more features here as they are implemented
   },
   log_level = "info",
@@ -360,6 +369,71 @@ keys = {
   { "<leader>sc", "<cmd>SwiftClean<cr>", desc = "Swift clean" },
 }
 ```
+
+### LSP Integration
+
+Automatic configuration of sourcekit-lsp for full language server support.
+
+**Features:**
+- Auto-detection of sourcekit-lsp from Xcode or Swift toolchain
+- Automatic LSP client setup with nvim-lspconfig
+- Code completion, diagnostics, hover documentation
+- Go to definition, find references, implementations
+- Code actions and refactoring
+- Inlay hints support
+- Semantic tokens for better syntax highlighting
+- Integration with nvim-cmp for completions
+
+**Configuration:**
+```lua
+features = {
+  lsp = {
+    enabled = true,
+    auto_setup = true,              -- Automatically setup LSP
+    sourcekit_path = nil,           -- Auto-detect if nil
+    inlay_hints = true,             -- Enable inlay hints
+    semantic_tokens = true,         -- Enable semantic highlighting
+    on_attach = nil,                -- Custom on_attach function
+    capabilities = nil,             -- Custom capabilities
+    cmd = nil,                      -- Custom command
+    root_dir = nil,                 -- Custom root_dir function
+    filetypes = { "swift" },
+    settings = {},
+  },
+}
+```
+
+**Default Keybindings:**
+- `gd` - Go to definition
+- `gD` - Go to declaration
+- `K` - Hover documentation
+- `gi` - Go to implementation
+- `gr` - Find references
+- `<C-k>` - Signature help
+- `<leader>ca` - Code actions
+- `<leader>rn` - Rename symbol
+- `<leader>f` - Format document
+- `[d` / `]d` - Previous/next diagnostic
+- `<leader>e` - Show diagnostic float
+- `<leader>q` - Diagnostics quickfix list
+
+**Customization:**
+```lua
+features = {
+  lsp = {
+    enabled = true,
+    on_attach = function(client, bufnr)
+      -- Your custom on_attach logic
+      print("LSP attached to buffer " .. bufnr)
+    end,
+  },
+}
+```
+
+**Requirements:**
+- `nvim-lspconfig` - LSP configuration
+- `sourcekit-lsp` - Swift LSP server (comes with Xcode or Swift toolchain)
+- `nvim-cmp` (optional) - For better completions
 
 ## Commands
 

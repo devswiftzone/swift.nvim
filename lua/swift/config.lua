@@ -19,6 +19,19 @@ local defaults = {
       close_on_success = false,
       focus_on_open = false,
     },
+    lsp = {
+      enabled = true,
+      auto_setup = true,
+      sourcekit_path = nil, -- Auto-detect
+      inlay_hints = true,
+      semantic_tokens = true,
+      on_attach = nil,
+      capabilities = nil,
+      cmd = nil,
+      root_dir = nil,
+      filetypes = { "swift" },
+      settings = {},
+    },
     -- Add more features here as they are implemented
   },
   log_level = "info",

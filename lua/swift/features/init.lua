@@ -23,6 +23,16 @@ function M.load()
     end
   end
 
+  -- Load lsp if enabled
+  if config.is_feature_enabled("lsp") then
+    local ok, lsp = pcall(require, "swift.features.lsp")
+    if ok then
+      lsp.setup(config.get_feature("lsp"))
+    else
+      vim.notify("Failed to load lsp: " .. tostring(lsp), vim.log.levels.ERROR)
+    end
+  end
+
   -- Add more features here as they are implemented
   -- Example:
   -- if config.is_feature_enabled("your_feature") then

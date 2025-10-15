@@ -63,6 +63,48 @@ function M.check()
       health.info("No Swift project detected in current directory")
     end
   end
+
+  -- Check LSP
+  health.start("LSP (sourcekit-lsp)")
+  if config.is_feature_enabled("lsp") then
+    local lsp_ok, lsp = pcall(require, "swift.features.lsp")
+    if lsp_ok then
+      if lsp.is_available() then
+        health.ok("sourcekit-lsp found")
+        health.info("Path: " .. lsp.find_sourcekit_lsp())
+
+        -- Check if LSP client is active
+        local status = lsp.status()
+        if status.active then
+          health.ok("LSP client is active")
+        else
+          health.info("LSP client not active (will start when opening Swift files)")
+        end
+      else
+        health.warn("sourcekit-lsp not found in PATH")
+        health.info("Install Swift toolchain or Xcode Command Line Tools")
+      end
+
+      -- Check nvim-lspconfig
+      local lspconfig_ok = pcall(require, "lspconfig")
+      if lspconfig_ok then
+        health.ok("nvim-lspconfig found")
+      else
+        health.warn("nvim-lspconfig not found (recommended)")
+        health.info("Install: https://github.com/neovim/nvim-lspconfig")
+      end
+
+      -- Check nvim-cmp (optional)
+      local cmp_ok = pcall(require, "cmp_nvim_lsp")
+      if cmp_ok then
+        health.ok("nvim-cmp integration available")
+      else
+        health.info("nvim-cmp not found (optional for completions)")
+      end
+    end
+  else
+    health.info("LSP feature is disabled")
+  end
 end
 
 return M
