@@ -25,6 +25,35 @@ function M.setup_commands()
     print("Swift.nvim is running!")
     print("Config: " .. vim.inspect(config.get()))
   end, { desc = "Show Swift.nvim info" })
+
+  vim.api.nvim_create_user_command("SwiftValidateEnvironment", function()
+    local validator = require("swift.version_validator")
+    validator.show_validation_results()
+  end, { desc = "Validate Swift environment and versions" })
+
+  vim.api.nvim_create_user_command("SwiftVersionInfo", function()
+    local validator = require("swift.version_validator")
+
+    print("Swift Version Information")
+    print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+
+    local installed = validator.get_installed_swift_version()
+    if installed then
+      print("Installed: " .. installed.string)
+    else
+      print("Installed: Not found")
+    end
+
+    local required = validator.get_required_swift_version()
+    if required then
+      print("Required (.swift-version): " .. required.string)
+      print("File: " .. required.file)
+    else
+      print("Required: No .swift-version file")
+    end
+
+    print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+  end, { desc = "Show Swift version info" })
 end
 
 function M.setup_autocmds()

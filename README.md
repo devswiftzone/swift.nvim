@@ -470,18 +470,77 @@ features = {
 
 ## Commands
 
+### General
 - `:SwiftInfo` - Show plugin information and current configuration
+- `:SwiftValidateEnvironment` - Validate Swift environment and versions
+- `:SwiftVersionInfo` - Show Swift version information
+
+### Project
 - `:SwiftDetectProject` - Detect and show Swift project type
 - `:SwiftProjectInfo` - Show current Swift project information
+
+### Build/Run/Test
 - `:SwiftBuild [debug|release]` - Build Swift package
 - `:SwiftRun [args]` - Run Swift package
 - `:SwiftTest [args]` - Run Swift tests
 - `:SwiftClean` - Clean build artifacts
 - `:SwiftBuildClose` - Close build output window
 
-## Health Check
+### Format/Lint
+- `:SwiftFormat` - Format current file
+- `:SwiftLint` - Lint current file
+- `:SwiftLintFix` - Auto-fix lint issues
 
+### Xcode
+- `:SwiftXcodeBuild [scheme]` - Build Xcode project
+- `:SwiftXcodeSchemes` - List available schemes
+- `:SwiftXcodeOpen` - Open in Xcode.app
+
+## Health Check & Validation
+
+### Health Check
 Run `:checkhealth swift` to verify the plugin is working correctly.
+
+This checks:
+- Swift compiler installation
+- Swift version and .swift-version file
+- swiftly installation
+- sourcekit-lsp availability
+- swift-format/swiftformat compatibility
+- SwiftLint installation
+- Xcode tools
+- All features status
+
+### Environment Validation
+Run `:SwiftValidateEnvironment` for detailed version checking:
+- Checks .swift-version file
+- Compares required vs installed Swift version
+- Lists swiftly installed versions
+- Validates swift-format compatibility with Swift
+- Provides installation suggestions
+
+Example output:
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Swift Environment Validation
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✓ .swift-version file: /path/to/project/.swift-version
+  Required version: 6.2
+
+✓ Installed Swift: 6.2.0
+
+✓ Version matches requirement
+
+✓ swiftly is available
+  Installed versions:
+  → 6.2.0
+    6.1.0
+
+✓ swift-format is compatible
+  Swift: 6.2.0
+  swift-format: 6.2.0
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
 
 ## Quick Start
 

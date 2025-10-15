@@ -33,11 +33,58 @@ function M.check()
     end
   end
 
-  -- Check Swift compiler
+  -- Check Swift compiler and version
+  local validator_ok, validator = pcall(require, "swift.version_validator")
+
   if vim.fn.executable("swift") == 1 then
     health.ok("Swift compiler found")
-    local version = vim.fn.system("swift --version 2>&1 | head -n 1")
-    health.info("Version: " .. vim.trim(version))
+
+    if validator_ok then
+      local installed = validator.get_installed_swift_version()
+      if installed then
+        health.info("Version: " .. installed.string)
+
+        -- Check for .swift-version file
+        local required = validator.get_required_swift_version()
+        if required then
+          health.info(".swift-version file: " .. required.file)
+          health.info("Required version: " .. required.string)
+
+          -- Check if versions match
+          local matches, info = validator.is_required_version_installed()
+          if matches then
+            health.ok("Installed version matches requirement")
+          else
+            health.error("Version mismatch!")
+            health.info("Install required version with: swiftly install " .. required.string)
+          end
+        end
+
+        -- Check swiftly
+        if vim.fn.executable("swiftly") == 1 then
+          health.ok("swiftly found (Swift version manager)")
+          local versions = validator.list_swiftly_versions()
+          if versions and #versions > 0 then
+            local current = nil
+            for _, v in ipairs(versions) do
+              if v.current then
+                current = v.version
+                break
+              end
+            end
+            if current then
+              health.info("Current swiftly version: " .. current)
+            end
+          end
+        else
+          health.info("swiftly not found (optional, but recommended)")
+          health.info("Install: curl -L https://swift-server.github.io/swiftly/swiftly-install.sh | bash")
+        end
+      end
+    else
+      local version = vim.fn.system("swift --version 2>&1 | head -n 1")
+      health.info("Version: " .. vim.trim(version))
+    end
   else
     health.warn("Swift compiler not found in PATH")
   end
@@ -116,6 +163,19 @@ function M.check()
       if info.swift_format_path then
         health.ok("swift-format found")
         health.info("Path: " .. info.swift_format_path)
+
+        -- Check formatter compatibility with Swift version
+        if validator_ok then
+          local compat, compat_info = validator.is_formatter_compatible()
+          if compat then
+            health.ok("swift-format version is compatible with Swift")
+          elseif compat_info then
+            health.warn("swift-format version may not match Swift version")
+            health.info("Swift: " .. compat_info.swift.string)
+            health.info("swift-format: " .. compat_info.formatter.string)
+            health.info("Consider updating swift-format to match Swift version")
+          end
+        end
       end
 
       if info.swiftformat_path then
@@ -125,8 +185,8 @@ function M.check()
 
       if not info.swift_format_path and not info.swiftformat_path then
         health.warn("No Swift formatter found")
-        health.info("Install swift-format: https://github.com/apple/swift-format")
-        health.info("Or swiftformat: https://github.com/nicklockwood/SwiftFormat")
+        health.info("Install swift-format: brew install swift-format")
+        health.info("Or swiftformat: brew install swiftformat")
       end
 
       if info.config_file then
