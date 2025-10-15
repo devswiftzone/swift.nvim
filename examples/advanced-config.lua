@@ -3,7 +3,7 @@
 
 return {
   {
-    "your-username/swift.nvim",
+    "devswiftzone/swift.nvim",
     ft = "swift",
 
     opts = {

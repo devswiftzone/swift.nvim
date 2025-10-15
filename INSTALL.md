@@ -9,7 +9,7 @@ Create the file `~/.config/nvim/lua/plugins/swift.lua`:
 ```lua
 return {
   {
-    "your-username/swift.nvim",
+    "devswiftzone/swift.nvim",
     ft = "swift",
     opts = {},
   },

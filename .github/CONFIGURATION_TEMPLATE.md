@@ -10,7 +10,7 @@ Quick copy-paste templates for different use cases.
 -- ~/.config/nvim/lua/plugins/swift.lua
 return {
   {
-    "your-username/swift.nvim",
+    "devswiftzone/swift.nvim",
     ft = "swift",
     opts = {},
   },
@@ -23,7 +23,7 @@ return {
 -- ~/.config/nvim/lua/plugins/swift.lua
 return {
   {
-    "your-username/swift.nvim",
+    "devswiftzone/swift.nvim",
     ft = "swift",
     opts = {},
     keys = {
@@ -40,7 +40,7 @@ return {
 -- ~/.config/nvim/lua/plugins/swift.lua
 return {
   {
-    "your-username/swift.nvim",
+    "devswiftzone/swift.nvim",
     ft = "swift",
     opts = {
       features = {
@@ -62,7 +62,7 @@ return {
 return {
   -- Swift plugin
   {
-    "your-username/swift.nvim",
+    "devswiftzone/swift.nvim",
     ft = "swift",
     opts = {},
   },
@@ -95,7 +95,7 @@ return {
 return {
   -- Swift plugin
   {
-    "your-username/swift.nvim",
+    "devswiftzone/swift.nvim",
     ft = "swift",
     opts = {
       features = {
@@ -160,7 +160,7 @@ return {
 
 ```lua
 {
-  "your-username/swift.nvim",
+  "devswiftzone/swift.nvim",
   ft = "swift",
   opts = {},
 }
@@ -170,7 +170,7 @@ return {
 
 ```lua
 {
-  "your-username/swift.nvim",
+  "devswiftzone/swift.nvim",
   event = { "BufReadPre *.swift", "BufNewFile *.swift" },
   opts = {},
 }
@@ -180,7 +180,7 @@ return {
 
 ```lua
 {
-  "your-username/swift.nvim",
+  "devswiftzone/swift.nvim",
   event = "VeryLazy",
   opts = {},
 }
@@ -190,7 +190,7 @@ return {
 
 ```lua
 {
-  "your-username/swift.nvim",
+  "devswiftzone/swift.nvim",
   lazy = false,
   priority = 50,
   opts = {},
@@ -221,7 +221,7 @@ return {
 
 ```lua
 {
-  "your-username/swift.nvim",
+  "devswiftzone/swift.nvim",
   ft = "swift",
   opts = {
     log_level = "debug",
@@ -239,7 +239,7 @@ return {
 
 ```lua
 use {
-  "your-username/swift.nvim",
+  "devswiftzone/swift.nvim",
   ft = "swift",
   config = function()
     require("swift").setup()
@@ -250,7 +250,7 @@ use {
 ### Vim-Plug
 
 ```vim
-Plug 'your-username/swift.nvim'
+Plug 'devswiftzone/swift.nvim'
 
 lua << EOF
 require("swift").setup()
@@ -263,7 +263,7 @@ EOF
 
 ```lua
 {
-  "your-username/swift.nvim",
+  "devswiftzone/swift.nvim",
   ft = "swift",
   opts = {
     features = {
@@ -279,7 +279,7 @@ EOF
 
 ```lua
 {
-  "your-username/swift.nvim",
+  "devswiftzone/swift.nvim",
   ft = "swift",
   opts = {
     features = {
@@ -295,7 +295,7 @@ EOF
 
 ```lua
 {
-  "your-username/swift.nvim",
+  "devswiftzone/swift.nvim",
   ft = "swift",
   opts = {
     features = {

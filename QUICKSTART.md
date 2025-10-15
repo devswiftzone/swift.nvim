@@ -11,7 +11,7 @@ Create `~/.config/nvim/lua/plugins/swift.lua`:
 ```lua
 return {
   {
-    "your-username/swift.nvim",
+    "devswiftzone/swift.nvim",
     ft = "swift",
     opts = {},
   },
@@ -64,18 +64,18 @@ Run these commands:
 
 ### Load on Swift files only (recommended)
 ```lua
-{ "your-username/swift.nvim", ft = "swift", opts = {} }
+{ "devswiftzone/swift.nvim", ft = "swift", opts = {} }
 ```
 
 ### Load when opening any directory
 ```lua
-{ "your-username/swift.nvim", event = "VeryLazy", opts = {} }
+{ "devswiftzone/swift.nvim", event = "VeryLazy", opts = {} }
 ```
 
 ### Disable notifications
 ```lua
 {
-  "your-username/swift.nvim",
+  "devswiftzone/swift.nvim",
   ft = "swift",
   opts = {
     features = {
@@ -90,7 +90,7 @@ Run these commands:
 ### Add keybindings
 ```lua
 {
-  "your-username/swift.nvim",
+  "devswiftzone/swift.nvim",
   ft = "swift",
   opts = {},
   keys = {

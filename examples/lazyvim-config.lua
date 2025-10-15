@@ -4,7 +4,7 @@
 return {
   -- Swift.nvim plugin
   {
-    "your-username/swift.nvim",
+    "devswiftzone/swift.nvim",
 
     -- Lazy loading strategies (choose one):
 

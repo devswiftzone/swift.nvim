@@ -18,7 +18,7 @@ A modular Neovim plugin for Swift development with automatic project detection a
 
 ```lua
 {
-  "your-username/swift.nvim",
+  "devswiftzone/swift.nvim",
   ft = "swift",  -- Load when opening Swift files
   config = function()
     require("swift").setup({
@@ -32,7 +32,7 @@ A modular Neovim plugin for Swift development with automatic project detection a
 
 ```lua
 {
-  "your-username/swift.nvim",
+  "devswiftzone/swift.nvim",
   event = { "BufReadPre *.swift", "BufNewFile *.swift" },
   config = function()
     require("swift").setup()
@@ -44,7 +44,7 @@ A modular Neovim plugin for Swift development with automatic project detection a
 
 ```lua
 {
-  "your-username/swift.nvim",
+  "devswiftzone/swift.nvim",
   event = "VeryLazy",  -- Load after UI is ready
   config = function()
     require("swift").setup({
@@ -64,7 +64,7 @@ A modular Neovim plugin for Swift development with automatic project detection a
 
 ```lua
 {
-  "your-username/swift.nvim",
+  "devswiftzone/swift.nvim",
   lazy = false,  -- Load immediately
   priority = 50, -- Load after default plugins
   config = function()
@@ -80,7 +80,7 @@ Create a file in `~/.config/nvim/lua/plugins/swift.lua`:
 ```lua
 return {
   {
-    "your-username/swift.nvim",
+    "devswiftzone/swift.nvim",
     ft = "swift",
     opts = {
       features = {
@@ -114,7 +114,7 @@ If you're developing the plugin locally:
 
 ```lua
 use {
-  "your-username/swift.nvim",
+  "devswiftzone/swift.nvim",
   ft = "swift",
   config = function()
     require("swift").setup()
@@ -125,7 +125,7 @@ use {
 ### Using [vim-plug](https://github.com/junegunn/vim-plug)
 
 ```vim
-Plug 'your-username/swift.nvim'
+Plug 'devswiftzone/swift.nvim'
 
 lua << EOF
 require("swift").setup()
@@ -207,7 +207,7 @@ require("swift").setup({
 
 ```lua
 {
-  "your-username/swift.nvim",
+  "devswiftzone/swift.nvim",
   ft = "swift",
   config = function()
     require("swift").setup()
@@ -242,7 +242,7 @@ Create `~/.config/nvim/lua/plugins/swift.lua`:
 return {
   -- Swift plugin
   {
-    "your-username/swift.nvim",
+    "devswiftzone/swift.nvim",
     ft = "swift",
     opts = {
       features = {
@@ -344,7 +344,7 @@ For LazyVim, create `~/.config/nvim/lua/plugins/swift.lua`:
 ```lua
 return {
   {
-    "your-username/swift.nvim",
+    "devswiftzone/swift.nvim",
     ft = "swift",
     opts = {},
   },
