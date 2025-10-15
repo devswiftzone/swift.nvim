@@ -1,5 +1,24 @@
 # Installation Guide
 
+## Prerequisites
+
+Before installing swift.nvim, ensure you have the Swift toolchain installed.
+
+**Quick setup:**
+```bash
+# 1. Install swiftly (Swift version manager)
+curl -L https://swift-server.github.io/swiftly/swiftly-install.sh | bash
+
+# 2. Install Swift toolchain
+swiftly install latest
+
+# 3. Verify installation
+swift --version
+sourcekit-lsp --version
+```
+
+**For detailed installation instructions**, see [DEPENDENCIES.md](./DEPENDENCIES.md)
+
 ## For LazyVim Users (Simplest Method)
 
 ### Step 1: Create plugin configuration

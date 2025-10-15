@@ -657,6 +657,23 @@ This will show:
 - ⚠ What needs attention
 - ✗ What's broken
 
+### Installing Dependencies
+
+Before troubleshooting, make sure all dependencies are properly installed.
+See [DEPENDENCIES.md](./DEPENDENCIES.md) for complete installation guide.
+
+**Quick install with swiftly:**
+```bash
+# Install swiftly
+curl -L https://swift-server.github.io/swiftly/swiftly-install.sh | bash
+
+# Install Swift
+swiftly install latest
+
+# Install tools
+brew install swift-format swiftformat swiftlint
+```
+
 ### Common Issues
 
 #### LSP Not Working
@@ -680,6 +697,7 @@ xcode-select --install
 **Check:**
 1. Is swift-format or swiftformat installed?
 2. Run `:SwiftFormat` and check error message
+3. Check if there's a Swift version mismatch
 
 **Fix:**
 ```bash
@@ -688,6 +706,27 @@ brew install swift-format
 
 # Or swiftformat
 brew install swiftformat
+
+# If using swiftly and getting version errors:
+swiftly list  # Check installed versions
+swiftly install 6.2  # Install required version
+
+# Or remove .swift-version file if not needed
+rm .swift-version
+```
+
+**Swift version mismatch error:**
+If you see: `The swift version file .swift-version uses toolchain version X.X`
+
+```bash
+# Install the required Swift version
+swiftly install 6.2
+
+# Or update .swift-version to match your installed version
+echo "6.2" > .swift-version
+
+# Or remove it to use system Swift
+rm .swift-version
 ```
 
 #### Linter Not Working

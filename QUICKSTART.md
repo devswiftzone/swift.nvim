@@ -2,6 +2,22 @@
 
 Get started with swift.nvim in under 5 minutes.
 
+## Prerequisites
+
+Make sure you have the Swift toolchain installed. See [DEPENDENCIES.md](./DEPENDENCIES.md) for details.
+
+**Quick install (macOS):**
+```bash
+# Install swiftly (Swift version manager)
+curl -L https://swift-server.github.io/swiftly/swiftly-install.sh | bash
+
+# Install Swift
+swiftly install latest
+
+# Install optional tools
+brew install swift-format swiftlint
+```
+
 ## For LazyVim Users
 
 ### Step 1: Create the plugin file

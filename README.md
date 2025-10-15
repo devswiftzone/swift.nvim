@@ -4,11 +4,44 @@ A modular Neovim plugin for Swift development with automatic project detection a
 
 **⚡ Quick Start:** See [QUICKSTART.md](./QUICKSTART.md) for a 5-minute setup guide.
 
+**📦 Dependencies:** See [DEPENDENCIES.md](./DEPENDENCIES.md) for complete installation guide.
+
 ## Requirements
 
-- Neovim >= 0.8.0
-- Swift compiler (optional, for development)
-- Xcode command line tools (optional, for Xcode project support on macOS)
+### Required
+- **Neovim >= 0.8.0**
+- **nvim-lspconfig** - For LSP support
+
+### Recommended
+- **Swift toolchain** - For development, building, and LSP
+- **swiftly** - Swift version manager (recommended for managing Swift versions)
+
+### Optional
+- **Xcode Command Line Tools** - For Xcode project support on macOS
+- **swift-format** - Official Swift formatter from Apple
+- **swiftformat** - Alternative Swift formatter
+- **SwiftLint** - Swift linter for code quality
+- **nvim-cmp** - For better code completions
+
+### Installing Dependencies
+
+**Quick setup with swiftly (Recommended):**
+```bash
+# 1. Install swiftly (Swift version manager)
+curl -L https://swift-server.github.io/swiftly/swiftly-install.sh | bash
+
+# 2. Install Swift toolchain
+swiftly install latest
+
+# 3. Install formatters and linter (macOS)
+brew install swift-format swiftformat swiftlint
+
+# 4. Verify
+swift --version
+sourcekit-lsp --version
+```
+
+**For detailed installation instructions**, see [DEPENDENCIES.md](./DEPENDENCIES.md)
 
 ## Installation
 
