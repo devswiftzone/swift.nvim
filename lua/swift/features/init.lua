@@ -73,6 +73,16 @@ function M.load()
     end
   end
 
+  -- Load snippets if enabled
+  if config.is_feature_enabled("snippets") then
+    local ok, snippets = pcall(require, "swift.features.snippets")
+    if ok then
+      snippets.setup(config.get_feature("snippets"))
+    else
+      vim.notify("Failed to load snippets: " .. tostring(snippets), vim.log.levels.ERROR)
+    end
+  end
+
   -- Add more features here as they are implemented
   -- Example:
   -- if config.is_feature_enabled("your_feature") then

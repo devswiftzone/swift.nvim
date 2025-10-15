@@ -56,6 +56,11 @@ local defaults = {
       enabled = true,
       cache_timeout = 60, -- Cache targets for 60 seconds
     },
+    snippets = {
+      enabled = true,
+      notify_on_load = false,       -- Show notification when snippets are loaded
+      warn_if_missing = false,      -- Warn if LuaSnip is not installed
+    },
     -- Add more features here as they are implemented
   },
   log_level = "info",

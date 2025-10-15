@@ -282,6 +282,40 @@ function M.check()
   else
     health.info("Target manager feature is disabled")
   end
+
+  -- Check Snippets
+  health.start("Snippets")
+  if config.is_feature_enabled("snippets") then
+    local snippets_ok, snippets = pcall(require, "swift.features.snippets")
+    if snippets_ok then
+      local info = snippets.get_snippet_info()
+
+      health.ok(string.format("Snippets feature available (%d snippets)", info.total_snippets))
+
+      -- Check LuaSnip
+      if info.luasnip_available then
+        health.ok("LuaSnip found")
+        health.info("Snippets are loaded and ready to use")
+      else
+        health.warn("LuaSnip not found")
+        health.info("Install LuaSnip: 'L3MON4D3/LuaSnip'")
+        health.info("Snippets will not work without LuaSnip")
+      end
+
+      -- Check nvim-cmp
+      if info.cmp_available then
+        health.ok("nvim-cmp found")
+        health.info("Also install: 'saadparwaiz1/cmp_luasnip' for snippet completion")
+      else
+        health.info("nvim-cmp not found (optional)")
+        health.info("Install for better completion: 'hrsh7th/nvim-cmp'")
+      end
+
+      health.info("Use :SwiftSnippets to list all available snippets")
+    end
+  else
+    health.info("Snippets feature is disabled")
+  end
 end
 
 return M
