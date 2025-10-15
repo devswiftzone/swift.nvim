@@ -372,7 +372,7 @@ function M.get_lualine_parts()
   -- icono para SPM (puedes cambiarlo)
   local spm_icon = " " -- o "󰛥 "
 
-  print(info)
+print(vim.inspect(info))
 
   if info.project_type == "spm" then
     return {
