@@ -66,10 +66,30 @@ end
 function M.detect_spm(start_path)
   local package_swift = utils.find_file_upwards("Package.swift", start_path)
   if package_swift then
+    local root = vim.fn.fnamemodify(package_swift, ":h")
+    local name = nil
+
+    -- Try to extract package name from Package.swift
+    local file = io.open(package_swift, "r")
+    if file then
+      local content = file:read("*a")
+      file:close()
+
+      -- Parse: let package = Package(name: "MyPackage", ...)
+      -- or: Package(name: "MyPackage", ...)
+      name = content:match('Package%s*%(.-name%s*:%s*"([^"]+)"')
+    end
+
+    -- Fallback: use directory name
+    if not name then
+      name = vim.fn.fnamemodify(root, ":t")
+    end
+
     return {
       type = M.ProjectType.SPM,
-      root = vim.fn.fnamemodify(package_swift, ":h"),
+      root = root,
       manifest = package_swift,
+      name = name,
     }
   end
   return nil
@@ -189,7 +209,7 @@ end
 function M.notify_project_detected(info)
   local msg = ""
   if info.type == M.ProjectType.SPM then
-    msg = string.format("Swift Package detected: %s", info.root)
+    msg = string.format("Swift Package detected: %s", info.name or info.root)
   elseif info.type == M.ProjectType.XCODE_WORKSPACE then
     msg = string.format("Xcode Workspace detected: %s", info.name)
   elseif info.type == M.ProjectType.XCODE_PROJECT then
@@ -214,6 +234,7 @@ function M.show_project_info(info)
 
   if info.type == M.ProjectType.SPM then
     print("  Manifest: " .. info.manifest)
+    print("  Name: " .. (info.name or "N/A"))
   elseif info.type == M.ProjectType.XCODE_WORKSPACE then
     print("  Workspace: " .. info.workspace)
     print("  Name: " .. info.name)
