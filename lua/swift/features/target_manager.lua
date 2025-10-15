@@ -10,12 +10,51 @@ M._cache = {
   last_check = 0,
 }
 
--- Parse Package.swift to extract targets
+-- Parse Package.swift to extract targets using swift package dump-package
 function M.parse_spm_targets()
   local detector = require("swift.features.project_detector")
   local project_info = detector.get_project_info()
 
-  if project_info.type ~= "spm" or not project_info.manifest then
+  if project_info.type ~= "spm" or not project_info.root then
+    return nil
+  end
+
+  -- First, try using swift package dump-package (most reliable)
+  local cmd = string.format('cd "%s" && swift package dump-package 2>/dev/null', project_info.root)
+  local output = vim.fn.system(cmd)
+
+  if vim.v.shell_error == 0 and output ~= "" then
+    -- Parse JSON output
+    local ok, package_data = pcall(vim.json.decode, output)
+    if ok and package_data and package_data.targets then
+      local targets = {}
+
+      for _, target in ipairs(package_data.targets) do
+        local target_type = "library" -- default
+
+        -- Determine type from target.type field
+        if target.type then
+          if target.type == "executable" then
+            target_type = "executable"
+          elseif target.type == "test" then
+            target_type = "test"
+          elseif target.type == "regular" or target.type == "library" then
+            target_type = "library"
+          end
+        end
+
+        table.insert(targets, {
+          name = target.name,
+          type = target_type,
+        })
+      end
+
+      return targets
+    end
+  end
+
+  -- Fallback: manual parsing of Package.swift
+  if not project_info.manifest then
     return nil
   end
 
@@ -28,45 +67,57 @@ function M.parse_spm_targets()
   file:close()
 
   local targets = {}
-  local in_targets_block = false
-  local current_target = nil
 
-  -- Parse targets from Package.swift
+  -- Simple but effective: find each target definition and extract just its name
+  -- We look for lines that start a target definition
+  local lines = {}
   for line in content:gmatch("[^\r\n]+") do
-    -- Look for .target( or .executableTarget( or .testTarget(
-    if line:match("%.target%s*%(") or line:match("%.executableTarget%s*%(") or line:match("%.testTarget%s*%(") then
-      in_targets_block = true
-      current_target = {}
+    table.insert(lines, line)
+  end
 
-      -- Determine type
-      if line:match("%.executableTarget") then
-        current_target.type = "executable"
-      elseif line:match("%.testTarget") then
-        current_target.type = "test"
-      else
-        current_target.type = "library"
+  local i = 1
+  while i <= #lines do
+    local line = lines[i]
+
+    -- Check if this line starts a target definition
+    local target_type_match = line:match("%.(%w+Target)%s*%(")
+
+    if target_type_match then
+      local target_type = "library"
+
+      if target_type_match == "executableTarget" then
+        target_type = "executable"
+      elseif target_type_match == "testTarget" then
+        target_type = "test"
+      end
+
+      -- Look for name in the next few lines (usually within 3 lines)
+      local target_name = nil
+
+      -- First check current line
+      target_name = line:match('name%s*:%s*"([^"]+)"')
+
+      -- If not found, check next few lines
+      if not target_name then
+        for j = i + 1, math.min(i + 5, #lines) do
+          local next_line = lines[j]
+          -- Only match if it's the parameter name (starts with whitespace + name:)
+          target_name = next_line:match('^%s+name%s*:%s*"([^"]+)"')
+          if target_name then
+            break
+          end
+        end
+      end
+
+      if target_name then
+        table.insert(targets, {
+          name = target_name,
+          type = target_type,
+        })
       end
     end
 
-    if in_targets_block and current_target then
-      -- Extract target name
-      local name = line:match('name%s*:%s*"([^"]+)"')
-      if name then
-        current_target.name = name
-      end
-
-      -- Extract dependencies
-      if line:match("dependencies%s*:") then
-        current_target.dependencies = {}
-      end
-
-      -- Check for end of target definition
-      if line:match("%)%s*,?%s*$") and current_target.name then
-        table.insert(targets, current_target)
-        current_target = nil
-        in_targets_block = false
-      end
-    end
+    i = i + 1
   end
 
   return targets
