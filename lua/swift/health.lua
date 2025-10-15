@@ -105,6 +105,89 @@ function M.check()
   else
     health.info("LSP feature is disabled")
   end
+
+  -- Check Formatter
+  health.start("Code Formatting")
+  if config.is_feature_enabled("formatter") then
+    local formatter_ok, formatter = pcall(require, "swift.features.formatter")
+    if formatter_ok then
+      local info = formatter.get_info()
+
+      if info.swift_format_path then
+        health.ok("swift-format found")
+        health.info("Path: " .. info.swift_format_path)
+      end
+
+      if info.swiftformat_path then
+        health.ok("swiftformat found")
+        health.info("Path: " .. info.swiftformat_path)
+      end
+
+      if not info.swift_format_path and not info.swiftformat_path then
+        health.warn("No Swift formatter found")
+        health.info("Install swift-format: https://github.com/apple/swift-format")
+        health.info("Or swiftformat: https://github.com/nicklockwood/SwiftFormat")
+      end
+
+      if info.config_file then
+        health.info("Config file: " .. info.config_file)
+      end
+    end
+  else
+    health.info("Formatter feature is disabled")
+  end
+
+  -- Check Linter
+  health.start("Linting (SwiftLint)")
+  if config.is_feature_enabled("linter") then
+    local linter_ok, linter = pcall(require, "swift.features.linter")
+    if linter_ok then
+      if linter.is_available() then
+        health.ok("SwiftLint found")
+        health.info("Path: " .. linter.find_swiftlint())
+
+        local config_file = linter.find_config_file()
+        if config_file then
+          health.info("Config file: " .. config_file)
+        else
+          health.info("No .swiftlint.yml found (using defaults)")
+        end
+      else
+        health.warn("SwiftLint not found")
+        health.info("Install: https://github.com/realm/SwiftLint")
+      end
+    end
+  else
+    health.info("Linter feature is disabled")
+  end
+
+  -- Check Xcode
+  health.start("Xcode Integration")
+  if config.is_feature_enabled("xcode") then
+    if vim.fn.has("mac") == 1 then
+      if vim.fn.executable("xcodebuild") == 1 then
+        health.ok("xcodebuild found")
+
+        local xcode_ok, xcode = pcall(require, "swift.features.xcode")
+        if xcode_ok and xcode.is_xcode_project() then
+          health.ok("Xcode project detected")
+          local schemes = xcode.list_schemes()
+          if #schemes > 0 then
+            health.info("Schemes: " .. table.concat(schemes, ", "))
+          end
+        else
+          health.info("Not in an Xcode project")
+        end
+      else
+        health.warn("xcodebuild not found")
+        health.info("Install Xcode Command Line Tools")
+      end
+    else
+      health.info("Xcode integration only available on macOS")
+    end
+  else
+    health.info("Xcode feature is disabled")
+  end
 end
 
 return M

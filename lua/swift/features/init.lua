@@ -33,6 +33,36 @@ function M.load()
     end
   end
 
+  -- Load formatter if enabled
+  if config.is_feature_enabled("formatter") then
+    local ok, formatter = pcall(require, "swift.features.formatter")
+    if ok then
+      formatter.setup(config.get_feature("formatter"))
+    else
+      vim.notify("Failed to load formatter: " .. tostring(formatter), vim.log.levels.ERROR)
+    end
+  end
+
+  -- Load linter if enabled
+  if config.is_feature_enabled("linter") then
+    local ok, linter = pcall(require, "swift.features.linter")
+    if ok then
+      linter.setup(config.get_feature("linter"))
+    else
+      vim.notify("Failed to load linter: " .. tostring(linter), vim.log.levels.ERROR)
+    end
+  end
+
+  -- Load xcode if enabled
+  if config.is_feature_enabled("xcode") then
+    local ok, xcode = pcall(require, "swift.features.xcode")
+    if ok then
+      xcode.setup(config.get_feature("xcode"))
+    else
+      vim.notify("Failed to load xcode: " .. tostring(xcode), vim.log.levels.ERROR)
+    end
+  end
+
   -- Add more features here as they are implemented
   -- Example:
   -- if config.is_feature_enabled("your_feature") then

@@ -32,6 +32,26 @@ local defaults = {
       filetypes = { "swift" },
       settings = {},
     },
+    formatter = {
+      enabled = true,
+      tool = nil, -- Auto-detect: "swift-format" | "swiftformat"
+      format_on_save = false,
+      config_file = nil, -- Auto-detect
+    },
+    linter = {
+      enabled = true,
+      lint_on_save = true,
+      auto_fix = false,
+      config_file = nil, -- Auto-detect
+    },
+    xcode = {
+      enabled = true,
+      default_scheme = nil,
+      default_simulator = nil,
+      show_output = true,
+      output_position = "botright",
+      output_height = 15,
+    },
     -- Add more features here as they are implemented
   },
   log_level = "info",
