@@ -363,6 +363,40 @@ function M.get_statusline_info()
   }
 end
 
+
+-- Devuelve partes para lualine cuando es SPM
+function M.get_lualine_parts()
+  local info = M.get_statusline_info()
+  if not info then return nil end
+
+  -- icono para SPM (puedes cambiarlo)
+  local spm_icon = " " -- o "󰛥 "
+
+  if info.project_type == "spm" then
+    return {
+      icon    = spm_icon,
+      target  = info.current_target or "default",
+      project = info.project_name or "Swift",
+      count   = info.total_targets or 0,
+      text    = string.format("%s%s - %s - (%d)", spm_icon, info.current_target or "default", info.project_name or "Swift", info.total_targets or 0),
+    }
+  end
+
+  -- Fallback (Xcode, etc.)
+  local icon = (info.project_type == "xcode_project" or info.project_type == "xcode_workspace") and " " or " "
+  local txt = info.current_target
+      and string.format("%s%s - %s (%d)", icon, info.current_target, info.project_name or "Swift", info.total_targets or 0)
+      or string.format("%s%s", icon, info.project_name or "Swift")
+  return {
+    icon    = icon,
+    target  = info.current_target or "",
+    project = info.project_name or "Swift",
+    count   = info.total_targets or 0,
+    text    = txt,
+  }
+end
+
+
 -- Format for statusline (simple)
 function M.statusline_simple()
   local info = M.get_statusline_info()
@@ -380,23 +414,28 @@ end
 
 -- Format for statusline (detailed)
 function M.statusline_detailed()
-  local info = M.get_statusline_info()
-
-  if not info then
-    return ""
-  end
-
-  local icon = "󰛥 "
-  if info.project_type == "xcode_project" or info.project_type == "xcode_workspace" then
-    icon = " "
-  end
-
-  if info.current_target then
-    return string.format("%s%s - %s (%d)", icon, info.current_target, info.project_name, info.total_targets or 0)
-  end
-
-  return string.format("%s%s", icon, info.project_name or "Swift")
+  local p = M.get_lualine_parts()
+  return p and p.text or ""
 end
+
+-- function M.statusline_detailed()
+--   local info = M.get_statusline_info()
+
+--   if not info then
+--     return ""
+--   end
+
+--   local icon = "󰛥 "
+--   if info.project_type == "xcode_project" or info.project_type == "xcode_workspace" then
+--     icon = " "
+--   end
+
+--   if info.current_target then
+--     return string.format("%s%s - %s (%d)", icon, info.current_target, info.project_name, info.total_targets or 0)
+--   end
+
+--   return string.format("%s%s", icon, info.project_name or "Swift")
+-- end
 
 -- Setup commands
 function M.setup_commands()
