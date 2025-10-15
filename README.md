@@ -1,31 +1,75 @@
 # swift.nvim
 
-A modular Neovim plugin for Swift development with automatic project detection and multiple features.
+A comprehensive, modular Neovim plugin for Swift development with LSP, build tools, formatting, linting, and more.
 
-**⚡ Quick Start:** See [QUICKSTART.md](./QUICKSTART.md) for a 5-minute setup guide.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**📦 Dependencies:** See [DEPENDENCIES.md](./DEPENDENCIES.md) for complete installation guide.
+---
 
-## Requirements
+## 📋 Table of Contents
+
+- [Features](#-features)
+- [Requirements](#-requirements)
+- [Installation](#-installation)
+- [Quick Start](#-quick-start)
+- [Configuration](#-configuration)
+- [Features Guide](#-features-guide)
+  - [Project Detection](#1-project-detection)
+  - [LSP Integration](#2-lsp-integration)
+  - [Target Manager](#3-target-manager)
+  - [Build Runner](#4-build-runner)
+  - [Code Formatting](#5-code-formatting)
+  - [Linting](#6-linting)
+  - [Xcode Integration](#7-xcode-integration)
+  - [Version Validation](#8-version-validation)
+- [Commands Reference](#-commands-reference)
+- [LuaLine Integration](#-lualine-integration)
+- [Examples](#-examples)
+- [Health Check](#-health-check)
+- [Troubleshooting](#-troubleshooting)
+- [Contributing](#-contributing)
+- [License](#-license)
+
+---
+
+## ✨ Features
+
+- **🔍 Smart Project Detection** - Auto-detects SPM, Xcode projects, and workspaces
+- **🧠 LSP Integration** - Automatic sourcekit-lsp configuration with nvim-lspconfig
+- **🎯 Target Management** - List, select, and display Swift targets in your statusline
+- **🔨 Build System** - Build, run, and test Swift packages with live output
+- **💅 Code Formatting** - Support for swift-format and swiftformat
+- **🔍 Linting** - SwiftLint integration with auto-fix
+- **🍎 Xcode Integration** - Build schemes, list targets, open in Xcode.app
+- **✅ Version Validation** - Validate Swift versions and tool compatibility
+- **📊 Health Checks** - Comprehensive :checkhealth integration
+
+---
+
+## 📦 Requirements
 
 ### Required
+
 - **Neovim >= 0.8.0**
+- **Swift toolchain** - For development, building, and LSP
 - **nvim-lspconfig** - For LSP support
 
 ### Recommended
-- **Swift toolchain** - For development, building, and LSP
-- **swiftly** - Swift version manager (recommended for managing Swift versions)
+
+- **swiftly** - Swift version manager (highly recommended)
+- **sourcekit-lsp** - Comes with Swift toolchain or Xcode
 
 ### Optional
-- **Xcode Command Line Tools** - For Xcode project support on macOS
+
+- **Xcode Command Line Tools** - For Xcode project support (macOS)
 - **swift-format** - Official Swift formatter from Apple
 - **swiftformat** - Alternative Swift formatter
 - **SwiftLint** - Swift linter for code quality
 - **nvim-cmp** - For better code completions
+- **LuaLine** - For statusline integration
 
-### Installing Dependencies
+### Quick Setup
 
-**Quick setup with swiftly (Recommended):**
 ```bash
 # 1. Install swiftly (Swift version manager)
 curl -L https://swift-server.github.io/swiftly/swiftly-install.sh | bash
@@ -41,74 +85,15 @@ swift --version
 sourcekit-lsp --version
 ```
 
-**For detailed installation instructions**, see [DEPENDENCIES.md](./DEPENDENCIES.md)
+**📦 For detailed installation**, see [DEPENDENCIES.md](./DEPENDENCIES.md)
 
-## Installation
+---
+
+## 🚀 Installation
 
 ### Using [lazy.nvim](https://github.com/folke/lazy.nvim) (Recommended)
 
-#### Option 1: Load on Swift files only (lazy loading)
-
-```lua
-{
-  "devswiftzone/swift.nvim",
-  ft = "swift",  -- Load when opening Swift files
-  config = function()
-    require("swift").setup({
-      -- Your configuration here (optional)
-    })
-  end,
-}
-```
-
-#### Option 2: Load on specific events (more flexible)
-
-```lua
-{
-  "devswiftzone/swift.nvim",
-  event = { "BufReadPre *.swift", "BufNewFile *.swift" },
-  config = function()
-    require("swift").setup()
-  end,
-}
-```
-
-#### Option 3: Load when entering a Swift project directory
-
-```lua
-{
-  "devswiftzone/swift.nvim",
-  event = "VeryLazy",  -- Load after UI is ready
-  config = function()
-    require("swift").setup({
-      features = {
-        project_detector = {
-          enabled = true,
-          auto_detect = true,
-          show_notification = true,
-        },
-      },
-    })
-  end,
-}
-```
-
-#### Option 4: Always load at startup (not recommended)
-
-```lua
-{
-  "devswiftzone/swift.nvim",
-  lazy = false,  -- Load immediately
-  priority = 50, -- Load after default plugins
-  config = function()
-    require("swift").setup()
-  end,
-}
-```
-
-### For LazyVim Users
-
-Create a file in `~/.config/nvim/lua/plugins/swift.lua`:
+**For LazyVim users**, create `~/.config/nvim/lua/plugins/swift.lua`:
 
 ```lua
 return {
@@ -116,29 +101,22 @@ return {
     "devswiftzone/swift.nvim",
     ft = "swift",
     opts = {
-      features = {
-        project_detector = {
-          enabled = true,
-          auto_detect = true,
-          show_notification = true,
-          cache_results = true,
-        },
-      },
+      -- Your configuration here
     },
   },
 }
 ```
 
-### Local Development
-
-If you're developing the plugin locally:
+**For other lazy.nvim setups:**
 
 ```lua
 {
-  dir = "~/projects/nvim/swift.nvim",  -- Path to your local plugin
+  "devswiftzone/swift.nvim",
   ft = "swift",
   config = function()
-    require("swift").setup()
+    require("swift").setup({
+      -- Your configuration here
+    })
   end,
 }
 ```
@@ -165,20 +143,101 @@ require("swift").setup()
 EOF
 ```
 
-## Configuration
+### Local Development
+
+```lua
+{
+  dir = "~/projects/nvim/swift.nvim",
+  ft = "swift",
+  config = function()
+    require("swift").setup()
+  end,
+}
+```
+
+---
+
+## 🎯 Quick Start
+
+### 1. Install the plugin
+
+Create `~/.config/nvim/lua/plugins/swift.lua`:
+
+```lua
+return {
+  {
+    "devswiftzone/swift.nvim",
+    ft = "swift",
+    opts = {},  -- Uses default configuration
+  },
+}
+```
+
+### 2. Reload Neovim
+
+```bash
+# Restart Neovim or run:
+:Lazy sync
+```
+
+### 3. Open a Swift project
+
+```bash
+cd your-swift-project
+nvim Package.swift
+# or
+nvim Sources/main.swift
+```
+
+### 4. Verify installation
+
+```vim
+:checkhealth swift
+```
+
+You should see ✓ marks for loaded features.
+
+---
+
+## ⚙️ Configuration
 
 ### Default Configuration
 
 ```lua
-{
+require("swift").setup({
   enabled = true,
+
   features = {
+    -- Project Detection
     project_detector = {
       enabled = true,
       auto_detect = true,          -- Auto-detect on buffer enter
       show_notification = true,    -- Show notification when project detected
       cache_results = true,        -- Cache detection results
     },
+
+    -- LSP Integration
+    lsp = {
+      enabled = true,
+      auto_setup = true,           -- Automatically setup LSP
+      sourcekit_path = nil,        -- Auto-detect if nil
+      inlay_hints = true,          -- Enable inlay hints
+      semantic_tokens = true,      -- Enable semantic tokens
+      on_attach = nil,             -- Custom on_attach function
+      capabilities = nil,          -- Custom capabilities
+      cmd = nil,                   -- Custom command
+      root_dir = nil,              -- Custom root_dir function
+      filetypes = { "swift" },
+      settings = {},
+    },
+
+    -- Target Manager
+    target_manager = {
+      enabled = true,
+      cache_timeout = 60,          -- Cache targets for 60 seconds
+    },
+
+    -- Build Runner
     build_runner = {
       enabled = true,
       auto_save = true,            -- Save all files before building
@@ -188,30 +247,47 @@ EOF
       close_on_success = false,    -- Auto-close on successful build
       focus_on_open = false,       -- Focus output window when opened
     },
-    lsp = {
+
+    -- Code Formatting
+    formatter = {
       enabled = true,
-      auto_setup = true,           -- Automatically setup LSP
-      sourcekit_path = nil,        -- Auto-detect
-      inlay_hints = true,          -- Enable inlay hints
-      semantic_tokens = true,      -- Enable semantic tokens
-      on_attach = nil,             -- Custom on_attach
-      capabilities = nil,          -- Custom capabilities
+      tool = nil,                  -- Auto-detect: "swift-format" | "swiftformat"
+      format_on_save = false,      -- Format on save
+      config_file = nil,           -- Auto-detect
     },
-    -- Add more features here as they are implemented
+
+    -- Linting
+    linter = {
+      enabled = true,
+      lint_on_save = true,         -- Lint on save
+      auto_fix = false,            -- Auto-fix issues
+      config_file = nil,           -- Auto-detect
+    },
+
+    -- Xcode Integration
+    xcode = {
+      enabled = true,
+      default_scheme = nil,        -- Default scheme to build
+      default_simulator = nil,     -- Default simulator
+      show_output = true,          -- Show build output
+      output_position = "botright",
+      output_height = 15,
+    },
   },
+
   log_level = "info",
-}
+})
 ```
 
 ### Common Configuration Examples
 
-#### Minimal setup (recommended)
+#### Minimal Setup (Recommended)
 
 ```lua
 require("swift").setup()  -- Uses all defaults
 ```
 
-#### Silent mode (no notifications)
+#### Silent Mode
 
 ```lua
 require("swift").setup({
@@ -223,123 +299,53 @@ require("swift").setup({
 })
 ```
 
-#### Manual detection only
+#### Format on Save
 
 ```lua
 require("swift").setup({
   features = {
-    project_detector = {
-      auto_detect = false,  -- Don't auto-detect, use :SwiftDetectProject instead
+    formatter = {
+      format_on_save = true,
+      tool = "swift-format",  -- or "swiftformat"
     },
   },
 })
 ```
 
-#### Disable project detection
+#### Custom LSP Configuration
 
 ```lua
 require("swift").setup({
   features = {
-    project_detector = {
-      enabled = false,  -- Completely disable the feature
+    lsp = {
+      on_attach = function(client, bufnr)
+        -- Your custom keybindings
+        vim.keymap.set("n", "gd", vim.lsp.buf.definition, { buffer = bufnr })
+        vim.keymap.set("n", "K", vim.lsp.buf.hover, { buffer = bufnr })
+      end,
     },
   },
 })
 ```
 
-### Integration with Other Plugins
+---
 
-#### With nvim-lspconfig
+## 📚 Features Guide
 
-```lua
-{
-  "devswiftzone/swift.nvim",
-  ft = "swift",
-  config = function()
-    require("swift").setup()
-  end,
-}
+### 1. Project Detection
 
--- In your LSP configuration
-require("lspconfig").sourcekit.setup({
-  root_dir = function()
-    local detector = require("swift.features.project_detector")
-    return detector.get_project_root() or vim.fn.getcwd()
-  end,
-})
-```
+Automatically detects Swift projects in your workspace.
 
-#### With which-key.nvim
-
-```lua
-{
-  "folke/which-key.nvim",
-  opts = function(_, opts)
-    opts.defaults["<leader>s"] = { name = "+swift" }
-  end,
-}
-```
-
-#### Complete LazyVim Example
-
-Create `~/.config/nvim/lua/plugins/swift.lua`:
-
-```lua
-return {
-  -- Swift plugin
-  {
-    "devswiftzone/swift.nvim",
-    ft = "swift",
-    opts = {
-      features = {
-        project_detector = {
-          enabled = true,
-          auto_detect = true,
-          show_notification = true,
-        },
-      },
-    },
-    keys = {
-      { "<leader>si", "<cmd>SwiftProjectInfo<cr>", desc = "Swift project info" },
-      { "<leader>sd", "<cmd>SwiftDetectProject<cr>", desc = "Detect Swift project" },
-    },
-  },
-
-  -- Optional: Configure LSP for Swift
-  {
-    "neovim/nvim-lspconfig",
-    opts = {
-      servers = {
-        sourcekit = {
-          root_dir = function(fname)
-            local detector = require("swift.features.project_detector")
-            local root = detector.get_project_root()
-            return root or vim.fn.fnamemodify(fname, ":h")
-          end,
-        },
-      },
-    },
-  },
-}
-```
-
-## Features
-
-### Project Detector
-Automatically detects Swift projects in your workspace. Supports:
-- **Swift Package Manager** (Package.swift)
-- **Xcode Projects** (*.xcodeproj)
-- **Xcode Workspaces** (*.xcworkspace)
-
-The detector searches upwards from the current file to find project markers.
+**Supports:**
+- Swift Package Manager (Package.swift)
+- Xcode Projects (*.xcodeproj)
+- Xcode Workspaces (*.xcworkspace)
 
 **Commands:**
-- `:SwiftDetectProject` - Manually detect project type
-- `:SwiftProjectInfo` - Show current project information
-
-**Buffer Variables:**
-- `vim.b.swift_project_type` - Type of project detected
-- `vim.b.swift_project_root` - Root directory of the project
+```vim
+:SwiftDetectProject    " Manually detect project type
+:SwiftProjectInfo      " Show current project information
+```
 
 **API:**
 ```lua
@@ -352,58 +358,28 @@ local is_project = detector.is_swift_project()
 local root = detector.get_project_root()
 
 -- Get project type
-local type = detector.get_project_type()
+local type = detector.get_project_type()  -- "spm" | "xcode_project" | "xcode_workspace" | "none"
 
 -- Get full project info
 local info = detector.get_project_info()
--- Returns: { type = "spm"|"xcode_project"|"xcode_workspace"|"none", root = "/path", ... }
+-- Returns: { type = "spm", root = "/path", manifest = "/path/Package.swift", ... }
 ```
-
-### Build Runner
-
-Build, run, and test Swift Package Manager projects directly from Neovim.
-
-**Features:**
-- Build Swift packages with debug/release configurations
-- Run Swift executables with custom arguments
-- Execute tests with filtering support
-- Clean build artifacts
-- Live output in split window
-- Auto-save before building
-
-**Commands:**
-- `:SwiftBuild [debug|release]` - Build the Swift package
-- `:SwiftRun [args]` - Run the Swift package
-- `:SwiftTest [args]` - Run Swift tests
-- `:SwiftClean` - Clean build artifacts
-- `:SwiftBuildClose` - Close build output window
 
 **Configuration:**
 ```lua
 features = {
-  build_runner = {
+  project_detector = {
     enabled = true,
-    auto_save = true,              -- Save all files before building
-    show_output = true,            -- Show output in split window
-    output_position = "botright",  -- Position: botright, belowright, etc
-    output_height = 15,            -- Height of output window
-    close_on_success = false,      -- Auto-close on successful build
-    focus_on_open = false,         -- Focus output window when opened
+    auto_detect = true,
+    show_notification = true,
+    cache_results = true,
   },
 }
 ```
 
-**Keybindings (example):**
-```lua
-keys = {
-  { "<leader>sb", "<cmd>SwiftBuild<cr>", desc = "Swift build" },
-  { "<leader>sr", "<cmd>SwiftRun<cr>", desc = "Swift run" },
-  { "<leader>st", "<cmd>SwiftTest<cr>", desc = "Swift test" },
-  { "<leader>sc", "<cmd>SwiftClean<cr>", desc = "Swift clean" },
-}
-```
+---
 
-### LSP Integration
+### 2. LSP Integration
 
 Automatic configuration of sourcekit-lsp for full language server support.
 
@@ -415,26 +391,6 @@ Automatic configuration of sourcekit-lsp for full language server support.
 - Code actions and refactoring
 - Inlay hints support
 - Semantic tokens for better syntax highlighting
-- Integration with nvim-cmp for completions
-
-**Configuration:**
-```lua
-features = {
-  lsp = {
-    enabled = true,
-    auto_setup = true,              -- Automatically setup LSP
-    sourcekit_path = nil,           -- Auto-detect if nil
-    inlay_hints = true,             -- Enable inlay hints
-    semantic_tokens = true,         -- Enable semantic highlighting
-    on_attach = nil,                -- Custom on_attach function
-    capabilities = nil,             -- Custom capabilities
-    cmd = nil,                      -- Custom command
-    root_dir = nil,                 -- Custom root_dir function
-    filetypes = { "swift" },
-    settings = {},
-  },
-}
-```
 
 **Default Keybindings:**
 - `gd` - Go to definition
@@ -450,48 +406,46 @@ features = {
 - `<leader>e` - Show diagnostic float
 - `<leader>q` - Diagnostics quickfix list
 
-**Customization:**
+**Configuration:**
 ```lua
 features = {
   lsp = {
     enabled = true,
+    auto_setup = true,
+    sourcekit_path = nil,        -- Auto-detect
+    inlay_hints = true,
+    semantic_tokens = true,
     on_attach = function(client, bufnr)
-      -- Your custom on_attach logic
-      print("LSP attached to buffer " .. bufnr)
+      -- Your custom logic
     end,
+    capabilities = nil,
+    settings = {},
   },
 }
 ```
 
 **Requirements:**
-- `nvim-lspconfig` - LSP configuration
-- `sourcekit-lsp` - Swift LSP server (comes with Xcode or Swift toolchain)
-- `nvim-cmp` (optional) - For better completions
+- nvim-lspconfig
+- sourcekit-lsp (comes with Xcode or Swift toolchain)
 
-### Target Manager
+---
 
-Detect and manage Swift targets from Package.swift and Xcode projects. Perfect for statusline integration.
+### 3. Target Manager
+
+Detect and manage Swift targets from Package.swift and Xcode projects.
 
 **Features:**
-- Parse targets from Package.swift (executable, library, test targets)
+- Parse targets from Package.swift (executable, library, test)
 - Extract schemes and targets from Xcode projects
-- Select active target with `vim.ui.select`
-- Statusline integration with LuaLine (see examples)
+- Select active target with interactive picker
+- Statusline integration (see LuaLine section)
 - Cached results for performance
 
 **Commands:**
-- `:SwiftTargets` - List all available targets in the project
-- `:SwiftSelectTarget` - Select a target with interactive picker
-- `:SwiftCurrentTarget` - Show currently selected target
-
-**Configuration:**
-```lua
-features = {
-  target_manager = {
-    enabled = true,
-    cache_timeout = 60,  -- Cache targets for 60 seconds
-  },
-}
+```vim
+:SwiftTargets          " List all available targets
+:SwiftSelectTarget     " Select target with interactive picker
+:SwiftCurrentTarget    " Show currently selected target
 ```
 
 **API:**
@@ -516,97 +470,209 @@ tm.set_current_target("MyApp")
 -- Get info for statusline
 local info = tm.get_statusline_info()
 -- Returns: { project_type = "spm", current_target = "MyApp", total_targets = 3 }
+
+-- Get formatted parts for custom statusline
+local parts = tm.get_lualine_parts()
+-- Returns: { icon = "󰛥", target = "MyApp", project = "MyProject", count = 3, text = "..." }
 ```
 
-**LuaLine Integration:**
+**Configuration:**
 ```lua
--- Simple target display
-require("lualine").setup({
-  sections = {
-    lualine_x = {
-      {
-        function()
-          local ok, tm = pcall(require, "swift.features.target_manager")
-          if ok and vim.bo.filetype == "swift" then
-            return tm.statusline_simple()
-          end
-          return ""
-        end,
-        icon = "󰛥",
-        color = { fg = "#ff6b00" },
-      },
-      "encoding",
-      "fileformat",
-      "filetype",
-    },
+features = {
+  target_manager = {
+    enabled = true,
+    cache_timeout = 60,  -- Cache targets for 60 seconds
   },
-})
+}
 ```
 
-**For complete LuaLine examples**, see [examples/lualine-integration.lua](./examples/lualine-integration.lua) with 10+ integration examples.
+---
 
-## Commands
+### 4. Build Runner
 
-### General
-- `:SwiftInfo` - Show plugin information and current configuration
-- `:SwiftValidateEnvironment` - Validate Swift environment and versions
-- `:SwiftVersionInfo` - Show Swift version information
+Build, run, and test Swift Package Manager projects directly from Neovim.
 
-### Project
-- `:SwiftDetectProject` - Detect and show Swift project type
-- `:SwiftProjectInfo` - Show current Swift project information
+**Features:**
+- Build Swift packages with debug/release configurations
+- Run Swift executables with custom arguments
+- Execute tests with filtering support
+- Clean build artifacts
+- Live output in split window
+- Auto-save before building
 
-### Build/Run/Test
-- `:SwiftBuild [debug|release]` - Build Swift package
-- `:SwiftRun [args]` - Run Swift package
-- `:SwiftTest [args]` - Run Swift tests
-- `:SwiftClean` - Clean build artifacts
-- `:SwiftBuildClose` - Close build output window
+**Commands:**
+```vim
+:SwiftBuild [debug|release]   " Build the Swift package
+:SwiftRun [args]              " Run the Swift package
+:SwiftTest [args]             " Run Swift tests
+:SwiftClean                   " Clean build artifacts
+:SwiftBuildClose              " Close build output window
+```
 
-### Format/Lint
-- `:SwiftFormat` - Format current file
-- `:SwiftLint` - Lint current file
-- `:SwiftLintFix` - Auto-fix lint issues
+**Examples:**
+```vim
+:SwiftBuild              " Build in debug mode
+:SwiftBuild release      " Build in release mode
+:SwiftRun                " Run the executable
+:SwiftRun --help         " Run with arguments
+:SwiftTest               " Run all tests
+:SwiftTest MyTestSuite   " Run specific test
+```
 
-### Xcode
-- `:SwiftXcodeBuild [scheme]` - Build Xcode project
-- `:SwiftXcodeSchemes` - List available schemes
-- `:SwiftXcodeOpen` - Open in Xcode.app
+**Configuration:**
+```lua
+features = {
+  build_runner = {
+    enabled = true,
+    auto_save = true,              -- Save all files before building
+    show_output = true,            -- Show output in split window
+    output_position = "botright",  -- Position: botright, belowright, etc
+    output_height = 15,            -- Height of output window
+    close_on_success = false,      -- Auto-close on successful build
+    focus_on_open = false,         -- Focus output window when opened
+  },
+}
+```
 
-### Targets
-- `:SwiftTargets` - List all Swift targets
-- `:SwiftSelectTarget` - Select target with picker
-- `:SwiftCurrentTarget` - Show current target
+**Keybindings Example:**
+```lua
+keys = {
+  { "<leader>sb", "<cmd>SwiftBuild<cr>", desc = "Swift build" },
+  { "<leader>sr", "<cmd>SwiftRun<cr>", desc = "Swift run" },
+  { "<leader>st", "<cmd>SwiftTest<cr>", desc = "Swift test" },
+  { "<leader>sc", "<cmd>SwiftClean<cr>", desc = "Swift clean" },
+}
+```
 
-## Health Check & Validation
+---
 
-### Health Check
-Run `:checkhealth swift` to verify the plugin is working correctly.
+### 5. Code Formatting
 
-This checks:
-- Swift compiler installation
-- Swift version and .swift-version file
-- swiftly installation
-- sourcekit-lsp availability
-- swift-format/swiftformat compatibility
-- SwiftLint installation
-- Xcode tools
-- All features status
+Format Swift code using swift-format or swiftformat.
 
-### Environment Validation
-Run `:SwiftValidateEnvironment` for detailed version checking:
-- Checks .swift-version file
-- Compares required vs installed Swift version
-- Lists swiftly installed versions
-- Validates swift-format compatibility with Swift
-- Provides installation suggestions
+**Features:**
+- Auto-detects swift-format and swiftformat
+- Format on save option
+- Format selection support
+- Config file detection (.swift-format, .swiftformat)
 
-Example output:
+**Commands:**
+```vim
+:SwiftFormat              " Format current file
+:SwiftFormatSelection     " Format visual selection
+```
+
+**Configuration:**
+```lua
+features = {
+  formatter = {
+    enabled = true,
+    tool = nil,              -- Auto-detect: "swift-format" | "swiftformat"
+    format_on_save = false,  -- Enable to format on save
+    config_file = nil,       -- Auto-detect .swift-format or .swiftformat
+  },
+}
+```
+
+**Format on Save:**
+```lua
+features = {
+  formatter = {
+    format_on_save = true,
+    tool = "swift-format",  -- Force specific formatter
+  },
+}
+```
+
+---
+
+### 6. Linting
+
+SwiftLint integration with diagnostics and auto-fix.
+
+**Features:**
+- SwiftLint integration
+- Lint on save with auto-fix option
+- Diagnostic integration with LSP
+- Config file detection (.swiftlint.yml)
+
+**Commands:**
+```vim
+:SwiftLint        " Lint current file
+:SwiftLintFix     " Auto-fix lint issues
+```
+
+**Configuration:**
+```lua
+features = {
+  linter = {
+    enabled = true,
+    lint_on_save = true,   -- Lint automatically on save
+    auto_fix = false,      -- Auto-fix issues on save
+    config_file = nil,     -- Auto-detect .swiftlint.yml
+  },
+}
+```
+
+---
+
+### 7. Xcode Integration
+
+Build and manage Xcode projects from Neovim.
+
+**Features:**
+- Build Xcode projects with xcodebuild
+- List and select schemes
+- Open in Xcode.app
+- Live build output
+
+**Commands:**
+```vim
+:SwiftXcodeBuild [scheme]   " Build Xcode project
+:SwiftXcodeSchemes          " List available schemes
+:SwiftXcodeOpen             " Open project in Xcode.app
+```
+
+**Configuration:**
+```lua
+features = {
+  xcode = {
+    enabled = true,
+    default_scheme = nil,        -- Default scheme to build
+    default_simulator = nil,     -- Default simulator
+    show_output = true,
+    output_position = "botright",
+    output_height = 15,
+  },
+}
+```
+
+**Note:** Xcode integration requires macOS and Xcode Command Line Tools.
+
+---
+
+### 8. Version Validation
+
+Validate Swift versions and tool compatibility.
+
+**Features:**
+- Check .swift-version file against installed Swift
+- List swiftly installed versions
+- Validate swift-format compatibility with Swift toolchain
+- Detailed validation reports
+
+**Commands:**
+```vim
+:SwiftValidateEnvironment   " Full environment validation
+:SwiftVersionInfo           " Quick version information
+```
+
+**Example Output:**
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Swift Environment Validation
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✓ .swift-version file: /path/to/project/.swift-version
+✓ .swift-version file: /path/to/.swift-version
   Required version: 6.2
 
 ✓ Installed Swift: 6.2.0
@@ -624,134 +690,343 @@ Swift Environment Validation
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-## Quick Start
+---
 
-### 1. Install the plugin
+## 📝 Commands Reference
 
-For LazyVim, create `~/.config/nvim/lua/plugins/swift.lua`:
+### General
+- `:SwiftInfo` - Show plugin information and configuration
+- `:SwiftValidateEnvironment` - Validate Swift environment
+- `:SwiftVersionInfo` - Show Swift version information
+
+### Project
+- `:SwiftDetectProject` - Detect and show Swift project type
+- `:SwiftProjectInfo` - Show current project information
+
+### Targets
+- `:SwiftTargets` - List all Swift targets
+- `:SwiftSelectTarget` - Select target with picker
+- `:SwiftCurrentTarget` - Show current target
+
+### Build/Run/Test
+- `:SwiftBuild [debug|release]` - Build Swift package
+- `:SwiftRun [args]` - Run Swift package
+- `:SwiftTest [args]` - Run Swift tests
+- `:SwiftClean` - Clean build artifacts
+- `:SwiftBuildClose` - Close build output window
+
+### Format/Lint
+- `:SwiftFormat` - Format current file
+- `:SwiftFormatSelection` - Format selection
+- `:SwiftLint` - Lint current file
+- `:SwiftLintFix` - Auto-fix lint issues
+
+### Xcode (macOS only)
+- `:SwiftXcodeBuild [scheme]` - Build Xcode project
+- `:SwiftXcodeSchemes` - List available schemes
+- `:SwiftXcodeOpen` - Open in Xcode.app
+
+---
+
+## 📊 LuaLine Integration
+
+Display Swift targets in your statusline.
+
+### Simple Integration
 
 ```lua
-return {
-  {
-    "devswiftzone/swift.nvim",
-    ft = "swift",
-    opts = {},
+require("lualine").setup({
+  sections = {
+    lualine_x = {
+      {
+        function()
+          local ok, tm = pcall(require, "swift.features.target_manager")
+          if ok and vim.bo.filetype == "swift" then
+            return tm.statusline_simple()
+          end
+          return ""
+        end,
+        icon = "󰛥",
+        color = { fg = "#ff6b00" },  -- Swift orange
+      },
+      "encoding",
+      "fileformat",
+      "filetype",
+    },
   },
-}
+})
 ```
 
-### 2. Reload Neovim
-
-Restart Neovim or run `:Lazy sync`
-
-### 3. Open a Swift file
-
-```bash
-cd your-swift-project
-nvim Package.swift
-# or
-nvim Sources/main.swift
-```
-
-The plugin will automatically detect your project type and notify you.
-
-### 4. Try the commands
-
-- `:SwiftProjectInfo` - See detected project information
-- `:SwiftDetectProject` - Manually trigger project detection
-- `:checkhealth swift` - Verify installation
-
-## Usage Examples
-
-### Check current project
-
-```vim
-:SwiftProjectInfo
-```
-
-Output:
-```
-Swift Project Information:
-  Type: spm
-  Root: /Users/you/projects/myapp
-  Manifest: /Users/you/projects/myapp/Package.swift
-```
-
-### Use in Lua scripts
+### Detailed Integration
 
 ```lua
-local detector = require("swift.features.project_detector")
-
-if detector.is_swift_project() then
-  local root = detector.get_project_root()
-  local type = detector.get_project_type()
-
-  print("Working in a " .. type .. " project at " .. root)
-end
+require("lualine").setup({
+  sections = {
+    lualine_x = {
+      {
+        function()
+          local ok, tm = pcall(require, "swift.features.target_manager")
+          if ok and vim.bo.filetype == "swift" then
+            return tm.statusline_detailed()
+          end
+          return ""
+        end,
+        color = { fg = "#ff6b00" },
+      },
+      "encoding",
+      "filetype",
+    },
+  },
+})
 ```
 
-### Custom statusline integration
+### Custom Parts Integration
 
 ```lua
--- In your statusline configuration
-local function swift_project_status()
-  if vim.bo.filetype ~= "swift" then
-    return ""
-  end
+require("lualine").setup({
+  sections = {
+    lualine_x = {
+      {
+        function()
+          local ok, tm = pcall(require, "swift.features.target_manager")
+          if not ok or vim.bo.filetype ~= "swift" then
+            return ""
+          end
 
-  local ok, detector = pcall(require, "swift.features.project_detector")
-  if not ok then
-    return ""
-  end
+          local parts = tm.get_lualine_parts()
+          if not parts then
+            return ""
+          end
 
-  local info = detector.get_project_info()
-  if info.type == "none" then
-    return ""
-  end
-
-  local icons = {
-    spm = "󰛥 ",
-    xcode_project = " ",
-    xcode_workspace = " ",
-  }
-
-  local icon = icons[info.type] or ""
-  local name = info.name or vim.fn.fnamemodify(info.root, ":t")
-
-  return icon .. name
-end
+          -- Customize how you display the parts
+          return string.format("%s %s", parts.icon, parts.target)
+        end,
+        color = { fg = "#ff6b00" },
+      },
+      "filetype",
+    },
+  },
+})
 ```
 
-## Configuration Files
+**For 10+ complete examples**, see [examples/lualine-integration.lua](./examples/lualine-integration.lua)
+
+---
+
+## 📖 Examples
 
 See the `examples/` directory for complete configuration examples:
 
-- `minimal-config.lua` - Bare minimum setup
-- `lazyvim-config.lua` - Full LazyVim integration with LSP, Treesitter, etc.
-- `local-dev-config.lua` - Setup for plugin development
-- `advanced-config.lua` - Advanced usage with custom commands and autocommands
-- `lualine-integration.lua` - 10+ examples for LuaLine statusline integration with Swift targets
+- **[minimal-config.lua](./examples/minimal-config.lua)** - Bare minimum setup
+- **[lazyvim-config.lua](./examples/lazyvim-config.lua)** - Full LazyVim integration
+- **[local-dev-config.lua](./examples/local-dev-config.lua)** - Plugin development setup
+- **[advanced-config.lua](./examples/advanced-config.lua)** - Advanced usage with custom commands
+- **[lualine-integration.lua](./examples/lualine-integration.lua)** - 10+ LuaLine statusline examples
 
-## Development
+---
+
+## 🏥 Health Check
+
+Run `:checkhealth swift` to verify the plugin is working correctly.
+
+**Checks:**
+- Plugin loaded successfully
+- Configuration loaded
+- All features status (enabled/disabled)
+- Swift compiler installation
+- Swift version and .swift-version file
+- swiftly installation
+- sourcekit-lsp availability
+- swift-format/swiftformat compatibility
+- SwiftLint installation
+- Xcode tools (macOS)
+- Target detection
+
+**Example:**
+```vim
+:checkhealth swift
+```
+
+**Expected Output:**
+```
+swift.nvim
+  ✓ Plugin loaded successfully
+  ✓ Configuration loaded
+
+Features
+  ✓ Feature 'project_detector' is enabled
+  ✓ Feature 'lsp' is enabled
+  ✓ Feature 'target_manager' is enabled
+  ...
+
+Swift Compiler
+  ✓ Swift compiler found
+  ○ Version: 6.2.0
+
+Target Manager
+  ✓ Target manager available
+  ✓ Found 2 target(s)
+  ○ Current target: MyApp
+  ○   executable: 1
+  ○   test: 1
+```
+
+---
+
+## 🔧 Troubleshooting
+
+### Plugin not loading?
+
+1. Check if installed:
+   ```vim
+   :Lazy
+   ```
+
+2. Check for errors:
+   ```vim
+   :messages
+   ```
+
+3. Reload plugin:
+   ```vim
+   :Lazy reload swift.nvim
+   ```
+
+### Project not detected?
+
+1. Make sure you have one of these files:
+   - `Package.swift`
+   - `*.xcodeproj`
+   - `*.xcworkspace`
+
+2. Try manual detection:
+   ```vim
+   :SwiftDetectProject
+   ```
+
+3. Check filetype:
+   ```vim
+   :set filetype?
+   ```
+   Should show: `filetype=swift`
+
+### Targets showing wrong names?
+
+1. Clear cache and refresh:
+   ```vim
+   :lua vim.g.swift_current_target = nil
+   :lua vim.b.swift_current_target = nil
+   :SwiftTargets
+   ```
+
+2. Test `swift package dump-package`:
+   ```bash
+   cd your-project
+   swift package dump-package
+   ```
+
+### LSP not working?
+
+1. Check if sourcekit-lsp is available:
+   ```bash
+   which sourcekit-lsp
+   sourcekit-lsp --version
+   ```
+
+2. Check LSP status:
+   ```vim
+   :LspInfo
+   ```
+
+3. Verify nvim-lspconfig is installed:
+   ```vim
+   :lua print(vim.inspect(require("lspconfig")))
+   ```
+
+### Version mismatch errors?
+
+1. Run environment validation:
+   ```vim
+   :SwiftValidateEnvironment
+   ```
+
+2. Install required Swift version:
+   ```bash
+   swiftly install 6.2
+   swiftly use 6.2
+   ```
+
+3. Update tools to match Swift version:
+   ```bash
+   brew upgrade swift-format
+   ```
+
+### Enable debug logging
+
+```lua
+require("swift").setup({
+  log_level = "debug",
+})
+```
+
+Then check messages:
+```vim
+:messages
+```
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+### Development Setup
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/devswiftzone/swift.nvim.git ~/projects/nvim/swift.nvim
+   ```
+
+2. Configure local plugin:
+   ```lua
+   {
+     dir = "~/projects/nvim/swift.nvim",
+     ft = "swift",
+     config = function()
+       require("swift").setup()
+     end,
+   }
+   ```
+
+3. Make changes and reload:
+   ```vim
+   :Lazy reload swift.nvim
+   ```
 
 ### Adding a New Feature
 
-1. Create a new file in `lua/swift/features/your_feature.lua`
-2. Add the feature configuration to `lua/swift/config.lua` defaults
-3. Load the feature in `lua/swift/features/init.lua`
+1. Create feature file: `lua/swift/features/your_feature.lua`
+2. Add configuration to `lua/swift/config.lua`
+3. Load feature in `lua/swift/features/init.lua`
+4. Add health check in `lua/swift/health.lua`
+5. Update README and documentation
 
-Example feature structure:
+---
 
-```lua
-local M = {}
+## 📄 License
 
-function M.setup(opts)
-  -- Initialize your feature
-end
+MIT License - see [LICENSE](./LICENSE) file for details.
 
-return M
-```
+---
 
-## License
+## 🔗 Links
 
-MIT
+- **Documentation**: [QUICKSTART.md](./QUICKSTART.md) | [DEPENDENCIES.md](./DEPENDENCIES.md) | [INSTALL.md](./INSTALL.md)
+- **Repository**: https://github.com/devswiftzone/swift.nvim
+- **Issues**: https://github.com/devswiftzone/swift.nvim/issues
+- **Swift**: https://swift.org
+- **swiftly**: https://github.com/swift-server/swiftly
+
+---
+
+**Made with ❤️ for the Swift community**
