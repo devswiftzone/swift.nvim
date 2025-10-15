@@ -392,7 +392,7 @@ function M.statusline_detailed()
   end
 
   if info.current_target then
-    return string.format("%s%s (%d)", icon, info.current_target, info.total_targets)
+    return string.format("%s%s (%d)", icon, info.current_target, info.project_name and info.total_targets or 0)
   end
 
   return string.format("%s%s", icon, info.project_name or "Swift")
