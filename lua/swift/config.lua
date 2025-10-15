@@ -10,14 +10,8 @@ local defaults = {
       show_notification = true,
       cache_results = true,
     },
-    feature1 = {
-      enabled = false,
-    },
-    feature2 = {
-      enabled = false,
-    },
+    -- Add more features here as they are implemented
   },
-  -- Add your default options here
   log_level = "info",
 }
 

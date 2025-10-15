@@ -146,12 +146,7 @@ EOF
       show_notification = true,    -- Show notification when project detected
       cache_results = true,        -- Cache detection results
     },
-    feature1 = {
-      enabled = false,
-    },
-    feature2 = {
-      enabled = false,
-    },
+    -- Add more features here as they are implemented
   },
   log_level = "info",
 }
@@ -312,18 +307,6 @@ local type = detector.get_project_type()
 local info = detector.get_project_info()
 -- Returns: { type = "spm"|"xcode_project"|"xcode_workspace"|"none", root = "/path", ... }
 ```
-
-### Feature 1
-Description of feature 1.
-
-**Commands:**
-- `:SwiftFeature1` - Execute Feature 1 action
-
-### Feature 2
-Description of feature 2.
-
-**Commands:**
-- `:SwiftFeature2` - Execute Feature 2 action
 
 ## Commands
 

@@ -13,25 +13,16 @@ function M.load()
     end
   end
 
-  -- Load feature1 if enabled
-  if config.is_feature_enabled("feature1") then
-    local ok, feature1 = pcall(require, "swift.features.feature1")
-    if ok then
-      feature1.setup(config.get_feature("feature1"))
-    else
-      vim.notify("Failed to load feature1: " .. tostring(feature1), vim.log.levels.ERROR)
-    end
-  end
-
-  -- Load feature2 if enabled
-  if config.is_feature_enabled("feature2") then
-    local ok, feature2 = pcall(require, "swift.features.feature2")
-    if ok then
-      feature2.setup(config.get_feature("feature2"))
-    else
-      vim.notify("Failed to load feature2: " .. tostring(feature2), vim.log.levels.ERROR)
-    end
-  end
+  -- Add more features here as they are implemented
+  -- Example:
+  -- if config.is_feature_enabled("your_feature") then
+  --   local ok, your_feature = pcall(require, "swift.features.your_feature")
+  --   if ok then
+  --     your_feature.setup(config.get_feature("your_feature"))
+  --   else
+  --     vim.notify("Failed to load your_feature: " .. tostring(your_feature), vim.log.levels.ERROR)
+  --   end
+  -- end
 end
 
 return M
