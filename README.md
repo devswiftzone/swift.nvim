@@ -8,8 +8,8 @@ A comprehensive, modular Neovim plugin for Swift development with LSP, build too
 
 - **🚀 [Getting Started](GETTING_STARTED.md)** - Quick 3-step setup guide
 - **📘 [Complete Documentation](DOCUMENTATION.md)** - Everything in one place
-- **⚡ [Minimal Config](MINIMAL_CONFIG.lua)** - Simple setup (30 lines)
-- **🔧 [Full Config](FULL_CONFIG.lua)** - All options (450 lines)
+- **⚡ [Minimal Config](examples/MINIMAL_CONFIG.lua)** - Simple setup (30 lines)
+- **🔧 [Full Config](examples/FULL_CONFIG.lua)** - All options (450 lines)
 
 ---
 
