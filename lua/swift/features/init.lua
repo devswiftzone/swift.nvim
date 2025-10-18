@@ -83,6 +83,16 @@ function M.load()
     end
   end
 
+  -- Load debugger if enabled
+  if config.is_feature_enabled("debugger") then
+    local ok, debugger = pcall(require, "swift.features.debugger")
+    if ok then
+      debugger.setup(config.get_feature("debugger"))
+    else
+      vim.notify("Failed to load debugger: " .. tostring(debugger), vim.log.levels.ERROR)
+    end
+  end
+
   -- Add more features here as they are implemented
   -- Example:
   -- if config.is_feature_enabled("your_feature") then

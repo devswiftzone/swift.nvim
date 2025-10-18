@@ -20,8 +20,9 @@ A comprehensive, modular Neovim plugin for Swift development with LSP, build too
   - [Build Runner](#4-build-runner)
   - [Code Formatting](#5-code-formatting)
   - [Linting](#6-linting)
-  - [Xcode Integration](#7-xcode-integration)
-  - [Version Validation](#8-version-validation)
+  - [Debugger](#7-debugger)
+  - [Xcode Integration](#8-xcode-integration)
+  - [Version Validation](#9-version-validation)
 - [Commands Reference](#-commands-reference)
 - [LuaLine Integration](#-lualine-integration)
 - [Examples](#-examples)
@@ -40,6 +41,7 @@ A comprehensive, modular Neovim plugin for Swift development with LSP, build too
 - **🔨 Build System** - Build, run, and test Swift packages with live output
 - **💅 Code Formatting** - Support for swift-format and swiftformat
 - **🔍 Linting** - SwiftLint integration with auto-fix
+- **🐛 Debugger** - Full debugging support with nvim-dap and lldb
 - **🍎 Xcode Integration** - Build schemes, list targets, open in Xcode.app
 - **✅ Version Validation** - Validate Swift versions and tool compatibility
 - **📊 Health Checks** - Comprehensive :checkhealth integration
@@ -616,7 +618,120 @@ features = {
 
 ---
 
-### 7. Xcode Integration
+### 7. Debugger
+
+Full debugging support for Swift using nvim-dap and lldb.
+
+**Features:**
+- Interactive debugging with breakpoints, stepping, and variable inspection
+- Auto-configuration of lldb-dap/lldb-vscode
+- Build and debug workflow
+- Support for program arguments
+- Integration with nvim-dap-ui for visual debugging
+- Debug both SPM packages and Xcode projects
+
+**Commands:**
+```vim
+:SwiftDebug              " Start debugging session
+:SwiftBuildAndDebug      " Build and start debugging
+:SwiftDebugArgs <args>   " Set program arguments for debugging
+:SwiftDebugClearArgs     " Clear debug arguments
+:SwiftDebugUI            " Toggle debug UI (requires nvim-dap-ui)
+```
+
+**Examples:**
+```vim
+" Set arguments for your program
+:SwiftDebugArgs arg1 arg2 --flag
+
+" Build and debug
+:SwiftBuildAndDebug
+
+" Start debugging (will prompt for executable if needed)
+:SwiftDebug
+```
+
+**Configuration:**
+```lua
+features = {
+  debugger = {
+    enabled = true,
+    auto_setup = true,            -- Automatically setup DAP configurations
+    lldb_path = nil,              -- Auto-detect lldb-dap/lldb-vscode
+    stop_on_entry = false,        -- Stop at entry point
+    show_console = true,          -- Show console output
+    wait_for_debugger = false,    -- Wait for debugger to attach
+  },
+}
+```
+
+**Recommended Setup with nvim-dap-ui:**
+```lua
+-- In your lazy.nvim configuration
+return {
+  {
+    "devswiftzone/swift.nvim",
+    ft = "swift",
+    opts = {
+      features = {
+        debugger = {
+          enabled = true,
+        },
+      },
+    },
+  },
+  {
+    "mfussenegger/nvim-dap",
+    dependencies = {
+      "rcarriga/nvim-dap-ui",
+      "nvim-neotest/nvim-nio",
+    },
+    config = function()
+      local dap, dapui = require("dap"), require("dapui")
+
+      -- Setup dap-ui
+      dapui.setup()
+
+      -- Auto-open/close UI
+      dap.listeners.after.event_initialized["dapui_config"] = function()
+        dapui.open()
+      end
+      dap.listeners.before.event_terminated["dapui_config"] = function()
+        dapui.close()
+      end
+      dap.listeners.before.event_exited["dapui_config"] = function()
+        dapui.close()
+      end
+
+      -- Keybindings
+      vim.keymap.set("n", "<F5>", dap.continue, { desc = "Debug: Continue" })
+      vim.keymap.set("n", "<F10>", dap.step_over, { desc = "Debug: Step Over" })
+      vim.keymap.set("n", "<F11>", dap.step_into, { desc = "Debug: Step Into" })
+      vim.keymap.set("n", "<F12>", dap.step_out, { desc = "Debug: Step Out" })
+      vim.keymap.set("n", "<leader>b", dap.toggle_breakpoint, { desc = "Debug: Toggle Breakpoint" })
+      vim.keymap.set("n", "<leader>B", function()
+        dap.set_breakpoint(vim.fn.input("Breakpoint condition: "))
+      end, { desc = "Debug: Set Conditional Breakpoint" })
+    end,
+  },
+}
+```
+
+**Requirements:**
+- nvim-dap
+- lldb-dap or lldb-vscode (included with Xcode on macOS)
+- nvim-dap-ui (optional, but highly recommended)
+
+**Quick Start:**
+1. Install nvim-dap and swift.nvim
+2. Build your project: `:SwiftBuild`
+3. Set breakpoints in your code (usually `<leader>b`)
+4. Start debugging: `:SwiftBuildAndDebug`
+5. Use F5/F10/F11/F12 to control execution
+
+---
+
+### 8. Xcode Integration
 
 Build and manage Xcode projects from Neovim.
 
@@ -651,7 +766,7 @@ features = {
 
 ---
 
-### 8. Version Validation
+### 9. Version Validation
 
 Validate Swift versions and tool compatibility.
 
@@ -720,6 +835,13 @@ Swift Environment Validation
 - `:SwiftFormatSelection` - Format selection
 - `:SwiftLint` - Lint current file
 - `:SwiftLintFix` - Auto-fix lint issues
+
+### Debug
+- `:SwiftDebug` - Start debugging session
+- `:SwiftBuildAndDebug` - Build and start debugging
+- `:SwiftDebugArgs <args>` - Set program arguments
+- `:SwiftDebugClearArgs` - Clear debug arguments
+- `:SwiftDebugUI` - Toggle debug UI (requires nvim-dap-ui)
 
 ### Xcode (macOS only)
 - `:SwiftXcodeBuild [scheme]` - Build Xcode project
