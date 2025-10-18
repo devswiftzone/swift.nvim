@@ -1,0 +1,45 @@
+# Labeler configuration for automatic PR labeling
+# https://github.com/actions/labeler
+
+documentation:
+  - '**/*.md'
+  - 'docs/**/*'
+  - 'examples/**/*.md'
+
+ci:
+  - '.github/workflows/**'
+  - '.github/**/*.yml'
+
+core:
+  - 'lua/swift/init.lua'
+  - 'lua/swift/config.lua'
+  - 'plugin/**'
+
+feature:lsp:
+  - 'lua/swift/features/lsp.lua'
+
+feature:debugger:
+  - 'lua/swift/features/debugger.lua'
+
+feature:formatter:
+  - 'lua/swift/features/formatter.lua'
+
+feature:linter:
+  - 'lua/swift/features/linter.lua'
+
+feature:build:
+  - 'lua/swift/features/build_runner.lua'
+
+feature:xcode:
+  - 'lua/swift/features/xcode.lua'
+
+feature:targets:
+  - 'lua/swift/features/target_manager.lua'
+
+tests:
+  - 'tests/**'
+  - '**/*_spec.lua'
+
+dependencies:
+  - 'package.json'
+  - '.github/workflows/**'

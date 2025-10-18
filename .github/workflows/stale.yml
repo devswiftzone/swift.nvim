@@ -1,0 +1,66 @@
+name: Close Stale Issues and PRs
+
+on:
+  schedule:
+    # Run daily at midnight UTC
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/stale@v9
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+          # Issues
+          stale-issue-message: |
+            This issue has been automatically marked as stale because it has not had recent activity.
+
+            It will be closed in 7 days if no further activity occurs.
+
+            If you believe this issue is still relevant, please:
+            - Add a comment explaining why
+            - Add the "status: blocked" label if waiting on something
+            - Add the "help wanted" label if you'd like community help
+
+            Thank you for your contributions!
+          close-issue-message: |
+            This issue has been automatically closed due to inactivity.
+
+            If you believe this should remain open, feel free to reopen it with additional context.
+          days-before-stale: 60
+          days-before-close: 7
+          stale-issue-label: 'stale'
+          exempt-issue-labels: 'priority: critical,priority: high,status: blocked,help wanted,good first issue'
+
+          # Pull Requests
+          stale-pr-message: |
+            This pull request has been automatically marked as stale because it has not had recent activity.
+
+            It will be closed in 14 days if no further activity occurs.
+
+            If you're still working on this:
+            - Add a comment with an update
+            - Request a review
+            - Rebase on the latest main branch
+
+            Thank you for your contribution!
+          close-pr-message: |
+            This pull request has been automatically closed due to inactivity.
+
+            If you'd like to continue this work, feel free to reopen or create a new PR.
+          days-before-pr-stale: 30
+          days-before-pr-close: 14
+          stale-pr-label: 'stale'
+          exempt-pr-labels: 'priority: critical,priority: high,status: in progress,breaking change'
+
+          # Operations
+          operations-per-run: 30
+          remove-stale-when-updated: true
+          ascending: true
