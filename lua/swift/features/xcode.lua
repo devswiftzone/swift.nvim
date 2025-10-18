@@ -148,9 +148,11 @@ function M.list_schemes()
     project_file = info.project
   end
 
-  local cmd = string.format("xcodebuild -list -workspace %s 2>/dev/null || xcodebuild -list -project %s 2>/dev/null",
+  local cmd = string.format(
+    "xcodebuild -list -workspace %s 2>/dev/null || xcodebuild -list -project %s 2>/dev/null",
     vim.fn.shellescape(project_file),
-    vim.fn.shellescape(project_file))
+    vim.fn.shellescape(project_file)
+  )
 
   local output = vim.fn.system(cmd)
   local schemes = {}
@@ -217,9 +219,7 @@ function M.build(scheme)
     project_flag = "-project " .. vim.fn.shellescape(info.project)
   end
 
-  local cmd = string.format("xcodebuild %s -scheme %s clean build",
-    project_flag,
-    vim.fn.shellescape(scheme))
+  local cmd = string.format("xcodebuild %s -scheme %s clean build", project_flag, vim.fn.shellescape(scheme))
 
   M.append_output({ "$ " .. cmd, "Building scheme: " .. scheme, "" })
 
@@ -238,7 +238,10 @@ function M.build(scheme)
       end
     end,
     on_exit = function(_, exit_code)
-      M.append_output({ "", "────────────────────────────────────" })
+      M.append_output({
+        "",
+        "────────────────────────────────────",
+      })
       if exit_code == 0 then
         M.append_output({ "✓ Build succeeded" })
         vim.notify("Build succeeded", vim.log.levels.INFO, { title = "swift.nvim" })

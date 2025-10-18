@@ -58,16 +58,16 @@ local defaults = {
     },
     snippets = {
       enabled = true,
-      notify_on_load = false,       -- Show notification when snippets are loaded
-      warn_if_missing = false,      -- Warn if LuaSnip is not installed
+      notify_on_load = false, -- Show notification when snippets are loaded
+      warn_if_missing = false, -- Warn if LuaSnip is not installed
     },
     debugger = {
       enabled = true,
-      auto_setup = true,             -- Automatically setup DAP configurations
-      lldb_path = nil,               -- Auto-detect lldb-dap/lldb-vscode
-      stop_on_entry = false,         -- Stop at entry point
-      show_console = true,           -- Show console output
-      wait_for_debugger = false,     -- Wait for debugger to attach
+      auto_setup = true, -- Automatically setup DAP configurations
+      lldb_path = nil, -- Auto-detect lldb-dap/lldb-vscode
+      stop_on_entry = false, -- Stop at entry point
+      show_console = true, -- Show console output
+      wait_for_debugger = false, -- Wait for debugger to attach
     },
     -- Add more features here as they are implemented
   },

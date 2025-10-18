@@ -74,17 +74,13 @@ function M.get_root_dir()
       end
 
       -- Fallback to manual detection
-      return vim.fs.dirname(
-        vim.fs.find({ "Package.swift", ".git" }, { upward = true, path = fname })[1]
-      )
+      return vim.fs.dirname(vim.fs.find({ "Package.swift", ".git" }, { upward = true, path = fname })[1])
     end
   end
 
   -- Fallback root_dir function
   return function(fname)
-    return vim.fs.dirname(
-      vim.fs.find({ "Package.swift", ".git" }, { upward = true, path = fname })[1]
-    )
+    return vim.fs.dirname(vim.fs.find({ "Package.swift", ".git" }, { upward = true, path = fname })[1])
   end
 end
 
@@ -202,11 +198,7 @@ function M.setup_lsp()
 
   lsp_setup_done = true
 
-  vim.notify(
-    "sourcekit-lsp configured successfully",
-    vim.log.levels.INFO,
-    { title = "swift.nvim" }
-  )
+  vim.notify("sourcekit-lsp configured successfully", vim.log.levels.INFO, { title = "swift.nvim" })
 end
 
 -- Manual LSP setup (if auto_setup is disabled)

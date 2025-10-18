@@ -229,7 +229,10 @@ function M.execute_command(cmd, cwd, on_success, on_error)
       local elapsed = (vim.loop.hrtime() - start_time) / 1e9
       local elapsed_str = string.format("%.2f", elapsed)
 
-      M.append_output({ "", "────────────────────────────────────" })
+      M.append_output({
+        "",
+        "────────────────────────────────────",
+      })
 
       if exit_code == 0 then
         M.append_output({

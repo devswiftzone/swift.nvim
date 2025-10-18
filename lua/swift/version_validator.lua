@@ -128,8 +128,7 @@ function M.is_required_version_installed()
   end
 
   -- Check if major.minor matches (patch can differ)
-  local matches = required.parsed.major == installed.parsed.major
-    and required.parsed.minor == installed.parsed.minor
+  local matches = required.parsed.major == installed.parsed.major and required.parsed.minor == installed.parsed.minor
 
   return matches, {
     required = required,
@@ -285,7 +284,10 @@ function M.validate_environment()
       if results.swiftly_available then
         local has_version = M.swiftly_has_version(results.required_version.string)
         if has_version then
-          table.insert(results.warnings, "Version is installed via swiftly, run: swiftly use " .. results.required_version.string)
+          table.insert(
+            results.warnings,
+            "Version is installed via swiftly, run: swiftly use " .. results.required_version.string
+          )
         else
           table.insert(results.warnings, "Install with: swiftly install " .. results.required_version.string)
         end
@@ -319,9 +321,13 @@ end
 function M.show_validation_results(results)
   results = results or M.validate_environment()
 
-  print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+  print(
+    "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  )
   print("Swift Environment Validation")
-  print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+  print(
+    "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  )
 
   -- Swift version file
   if results.swift_version_file then
@@ -385,7 +391,9 @@ function M.show_validation_results(results)
   -- Errors
   if #results.errors > 0 then
     print("")
-    print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+    print(
+      "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    )
     print("Errors:")
     for _, err in ipairs(results.errors) do
       print("✗ " .. err)
@@ -395,14 +403,18 @@ function M.show_validation_results(results)
   -- Warnings
   if #results.warnings > 0 then
     print("")
-    print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+    print(
+      "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    )
     print("Warnings/Suggestions:")
     for _, warn in ipairs(results.warnings) do
       print("⚠ " .. warn)
     end
   end
 
-  print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+  print(
+    "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  )
 
   return results
 end

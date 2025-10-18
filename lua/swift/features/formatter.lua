@@ -218,11 +218,7 @@ function M.format_selection()
   local formatter = M.detect_formatter()
 
   if not formatter then
-    vim.notify(
-      "No Swift formatter found",
-      vim.log.levels.WARN,
-      { title = "swift.nvim" }
-    )
+    vim.notify("No Swift formatter found", vim.log.levels.WARN, { title = "swift.nvim" })
     return
   end
 

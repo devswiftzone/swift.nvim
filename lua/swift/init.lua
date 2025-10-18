@@ -35,7 +35,9 @@ function M.setup_commands()
     local validator = require("swift.version_validator")
 
     print("Swift Version Information")
-    print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+    print(
+      "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    )
 
     local installed = validator.get_installed_swift_version()
     if installed then
@@ -52,7 +54,9 @@ function M.setup_commands()
       print("Required: No .swift-version file")
     end
 
-    print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+    print(
+      "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    )
   end, { desc = "Show Swift version info" })
 end
 

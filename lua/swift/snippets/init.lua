@@ -355,7 +355,7 @@ M.snippets = {
     body = {
       "struct ${1:ViewName}: View {",
       "\tvar body: some View {",
-      "\t\t${2:Text(\"Hello, World!\")}",
+      '\t\t${2:Text("Hello, World!")}',
       "\t}",
       "}",
     },

@@ -363,39 +363,51 @@ function M.get_statusline_info()
   }
 end
 
-
 -- Devuelve partes para lualine cuando es SPM
 function M.get_lualine_parts()
   local info = M.get_statusline_info()
-  if not info then return nil end
+  if not info then
+    return nil
+  end
 
   -- icono para SPM (puedes cambiarlo)
   local spm_icon = " " -- o "󰛥 "
 
   if info.project_type == "spm" then
     return {
-      icon    = spm_icon,
-      target  = info.current_target or "default",
+      icon = spm_icon,
+      target = info.current_target or "default",
       project = info.project_name or "Swift",
-      count   = info.total_targets or 0,
-      text    = string.format("%s%s - %s - (%d)", spm_icon, info.current_target or "default", info.project_name or "Swift", info.total_targets or 0),
+      count = info.total_targets or 0,
+      text = string.format(
+        "%s%s - %s - (%d)",
+        spm_icon,
+        info.current_target or "default",
+        info.project_name or "Swift",
+        info.total_targets or 0
+      ),
     }
   end
 
   -- Fallback (Xcode, etc.)
   local icon = (info.project_type == "xcode_project" or info.project_type == "xcode_workspace") and " " or " "
   local txt = info.current_target
-      and string.format("%s%s - %s (%d)", icon, info.current_target, info.project_name or "Swift", info.total_targets or 0)
-      or string.format("%s%s", icon, info.project_name or "Swift")
+      and string.format(
+        "%s%s - %s (%d)",
+        icon,
+        info.current_target,
+        info.project_name or "Swift",
+        info.total_targets or 0
+      )
+    or string.format("%s%s", icon, info.project_name or "Swift")
   return {
-    icon    = icon,
-    target  = info.current_target or "",
+    icon = icon,
+    target = info.current_target or "",
     project = info.project_name or "Swift",
-    count   = info.total_targets or 0,
-    text    = txt,
+    count = info.total_targets or 0,
+    text = txt,
   }
 end
-
 
 -- Format for statusline (simple)
 function M.statusline_simple()
@@ -448,7 +460,9 @@ function M.setup_commands()
     end
 
     print("Swift Targets:")
-    print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+    print(
+      "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    )
 
     for _, target in ipairs(targets) do
       local type_label = target.type:upper()
@@ -461,7 +475,9 @@ function M.setup_commands()
       print(string.format("  %s: %s%s", type_label, target.name, current_marker))
     end
 
-    print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+    print(
+      "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    )
   end, { desc = "List all Swift targets" })
 
   vim.api.nvim_create_user_command("SwiftSelectTarget", function()

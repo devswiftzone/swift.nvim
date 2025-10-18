@@ -84,7 +84,9 @@ function M.list_snippets()
   local snippet_collection = require("swift.snippets")
 
   print("Swift Snippets:")
-  print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+  print(
+    "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  )
 
   -- Group by category
   local categories = {
@@ -104,13 +106,33 @@ function M.list_snippets()
     local name = snip.name
 
     -- Categorize
-    if trigger:match("^struct") or trigger:match("^class") or trigger:match("^enum") or trigger:match("^protocol") or trigger:match("^extension") or trigger:match("^actor") then
+    if
+      trigger:match("^struct")
+      or trigger:match("^class")
+      or trigger:match("^enum")
+      or trigger:match("^protocol")
+      or trigger:match("^extension")
+      or trigger:match("^actor")
+    then
       table.insert(categories["Structures"], snip)
     elseif trigger:match("^func") or trigger:match("^init") or trigger:match("^deinit") then
       table.insert(categories["Functions"], snip)
-    elseif trigger:match("^let") or trigger:match("^var") or trigger:match("^lazy") or trigger:match("^computed") or trigger:match("set$") or trigger:match("^@") then
+    elseif
+      trigger:match("^let")
+      or trigger:match("^var")
+      or trigger:match("^lazy")
+      or trigger:match("^computed")
+      or trigger:match("set$")
+      or trigger:match("^@")
+    then
       table.insert(categories["Properties"], snip)
-    elseif trigger:match("^if") or trigger:match("^guard") or trigger:match("^switch") or trigger:match("^for") or trigger:match("^while") then
+    elseif
+      trigger:match("^if")
+      or trigger:match("^guard")
+      or trigger:match("^switch")
+      or trigger:match("^for")
+      or trigger:match("^while")
+    then
       table.insert(categories["Control Flow"], snip)
     elseif trigger:match("^try") or trigger:match("^dotry") or trigger:match("^throw") then
       table.insert(categories["Error Handling"], snip)
@@ -135,7 +157,9 @@ function M.list_snippets()
     end
   end
 
-  print("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+  print(
+    "\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  )
   print(string.format("Total: %d snippets", #snippet_collection.snippets))
 
   if not M.is_luasnip_available() then
