@@ -41,7 +41,7 @@ A comprehensive, modular Neovim plugin for Swift development with LSP, build too
 - **🔨 Build System** - Build, run, and test Swift packages with live output
 - **💅 Code Formatting** - Support for swift-format and swiftformat
 - **🔍 Linting** - SwiftLint integration with auto-fix
-- **🐛 Debugger** - Full debugging support with nvim-dap and lldb
+- **🐛 Debugger** - Full debugging support with LLDB (no dependencies required)
 - **🍎 Xcode Integration** - Build schemes, list targets, open in Xcode.app
 - **✅ Version Validation** - Validate Swift versions and tool compatibility
 - **📊 Health Checks** - Comprehensive :checkhealth integration
@@ -620,35 +620,65 @@ features = {
 
 ### 7. Debugger
 
-Full debugging support for Swift using nvim-dap and lldb.
+Full debugging support for Swift using LLDB directly - no external dependencies required!
 
 **Features:**
 - Interactive debugging with breakpoints, stepping, and variable inspection
-- Auto-configuration of lldb-dap/lldb-vscode
-- Build and debug workflow
-- Support for program arguments
-- Integration with nvim-dap-ui for visual debugging
+- Direct LLDB integration (no nvim-dap needed)
+- Visual breakpoint indicators with custom signs
+- Current line highlighting during debug sessions
+- Build and debug workflow for both executables and tests
+- Automatic detection of test targets (.xctest bundles)
+- LLDB runs from project root with correct working directory
+- Configurable debug output window (bottom, right, or floating)
+- Send custom LLDB commands
 - Debug both SPM packages and Xcode projects
 
 **Commands:**
 ```vim
-:SwiftDebug              " Start debugging session
-:SwiftBuildAndDebug      " Build and start debugging
-:SwiftDebugArgs <args>   " Set program arguments for debugging
-:SwiftDebugClearArgs     " Clear debug arguments
-:SwiftDebugUI            " Toggle debug UI (requires nvim-dap-ui)
+:SwiftDebug                 " Start debugging session
+:SwiftBuildAndDebug         " Build and start debugging
+:SwiftBuildAndDebugTests    " Build tests and start debugging (.xctest)
+:SwiftDebugStop             " Stop debugging session
+:SwiftDebugContinue         " Continue execution (F5)
+:SwiftDebugStepOver         " Step over (F10)
+:SwiftDebugStepInto         " Step into (F11)
+:SwiftDebugStepOut          " Step out (F12)
+:SwiftBreakpointToggle      " Toggle breakpoint at current line
+:SwiftBreakpointClear       " Clear all breakpoints
+:SwiftDebugVariables        " Show local variables
+:SwiftDebugBacktrace        " Show call stack
+:SwiftDebugCommand <cmd>    " Send custom LLDB command
+:SwiftDebugUI               " Toggle debug output window
 ```
+
+**Visual Indicators:**
+- `●` - Red breakpoint indicator in the sign column
+- `➤` - Blue current line indicator during debugging
+- Highlighted current line when stopped at a breakpoint
 
 **Examples:**
 ```vim
-" Set arguments for your program
-:SwiftDebugArgs arg1 arg2 --flag
+" Toggle breakpoint at current line
+:SwiftBreakpointToggle
 
-" Build and debug
+" Build and start debugging an executable
 :SwiftBuildAndDebug
 
-" Start debugging (will prompt for executable if needed)
-:SwiftDebug
+" Build and debug tests (automatically detects .xctest bundles)
+:SwiftBuildAndDebugTests
+
+" Step through code
+:SwiftDebugStepOver
+
+" Inspect variables
+:SwiftDebugVariables
+
+" Send custom LLDB command
+:SwiftDebugCommand p myVariable
+
+" Show call stack
+:SwiftDebugBacktrace
 ```
 
 **Configuration:**
@@ -656,16 +686,24 @@ Full debugging support for Swift using nvim-dap and lldb.
 features = {
   debugger = {
     enabled = true,
-    auto_setup = true,            -- Automatically setup DAP configurations
-    lldb_path = nil,              -- Auto-detect lldb-dap/lldb-vscode
-    stop_on_entry = false,        -- Stop at entry point
-    show_console = true,          -- Show console output
-    wait_for_debugger = false,    -- Wait for debugger to attach
+    lldb_path = nil,              -- Auto-detect lldb
+    signs = {
+      breakpoint = "●",            -- Breakpoint sign
+      current_line = "➤",          -- Current line sign
+    },
+    colors = {
+      breakpoint = "DiagnosticError",    -- Breakpoint color
+      current_line = "DiagnosticInfo",   -- Current line color
+    },
+    window = {
+      position = "bottom",         -- "bottom", "right", or "float"
+      size = 15,                   -- Height for bottom, width for right
+    },
   },
 }
 ```
 
-**Recommended Setup with nvim-dap-ui:**
+**Recommended Setup with Keybindings:**
 ```lua
 -- In your lazy.nvim configuration
 return {
@@ -676,58 +714,52 @@ return {
       features = {
         debugger = {
           enabled = true,
+          window = {
+            position = "bottom",
+            size = 15,
+          },
         },
       },
     },
-  },
-  {
-    "mfussenegger/nvim-dap",
-    dependencies = {
-      "rcarriga/nvim-dap-ui",
-      "nvim-neotest/nvim-nio",
-    },
-    config = function()
-      local dap, dapui = require("dap"), require("dapui")
+    config = function(_, opts)
+      require("swift").setup(opts)
 
-      -- Setup dap-ui
-      dapui.setup()
-
-      -- Auto-open/close UI
-      dap.listeners.after.event_initialized["dapui_config"] = function()
-        dapui.open()
-      end
-      dap.listeners.before.event_terminated["dapui_config"] = function()
-        dapui.close()
-      end
-      dap.listeners.before.event_exited["dapui_config"] = function()
-        dapui.close()
-      end
-
-      -- Keybindings
-      vim.keymap.set("n", "<F5>", dap.continue, { desc = "Debug: Continue" })
-      vim.keymap.set("n", "<F10>", dap.step_over, { desc = "Debug: Step Over" })
-      vim.keymap.set("n", "<F11>", dap.step_into, { desc = "Debug: Step Into" })
-      vim.keymap.set("n", "<F12>", dap.step_out, { desc = "Debug: Step Out" })
-      vim.keymap.set("n", "<leader>b", dap.toggle_breakpoint, { desc = "Debug: Toggle Breakpoint" })
-      vim.keymap.set("n", "<leader>B", function()
-        dap.set_breakpoint(vim.fn.input("Breakpoint condition: "))
-      end, { desc = "Debug: Set Conditional Breakpoint" })
+      -- Debug keybindings
+      local debugger = require("swift.features.debugger")
+      vim.keymap.set("n", "<F5>", debugger.continue, { desc = "Debug: Continue" })
+      vim.keymap.set("n", "<F9>", debugger.toggle_breakpoint, { desc = "Debug: Toggle Breakpoint" })
+      vim.keymap.set("n", "<F10>", debugger.step_over, { desc = "Debug: Step Over" })
+      vim.keymap.set("n", "<F11>", debugger.step_into, { desc = "Debug: Step Into" })
+      vim.keymap.set("n", "<F12>", debugger.step_out, { desc = "Debug: Step Out" })
+      vim.keymap.set("n", "<leader>db", debugger.toggle_breakpoint, { desc = "Toggle Breakpoint" })
+      vim.keymap.set("n", "<leader>dc", debugger.continue, { desc = "Continue" })
+      vim.keymap.set("n", "<leader>ds", debugger.stop, { desc = "Stop Debugging" })
+      vim.keymap.set("n", "<leader>dv", debugger.show_variables, { desc = "Show Variables" })
+      vim.keymap.set("n", "<leader>dt", debugger.show_backtrace, { desc = "Show Backtrace" })
     end,
   },
 }
 ```
 
 **Requirements:**
-- nvim-dap
-- lldb-dap or lldb-vscode (included with Xcode on macOS)
-- nvim-dap-ui (optional, but highly recommended)
+- LLDB (included with Swift toolchain and Xcode on macOS)
+- No additional plugins required!
 
 **Quick Start:**
-1. Install nvim-dap and swift.nvim
-2. Build your project: `:SwiftBuild`
-3. Set breakpoints in your code (usually `<leader>b`)
-4. Start debugging: `:SwiftBuildAndDebug`
-5. Use F5/F10/F11/F12 to control execution
+
+For debugging executables:
+1. Build your project: `:SwiftBuild`
+2. Set breakpoints with `:SwiftBreakpointToggle` (or `<F9>`)
+3. Start debugging: `:SwiftBuildAndDebug`
+4. Use F5/F10/F11/F12 to control execution
+5. View variables with `:SwiftDebugVariables`
+6. Toggle debug output with `:SwiftDebugUI`
+
+For debugging tests:
+1. Select a test target with `:SwiftTarget`
+2. Set breakpoints in your test files
+3. Start debugging tests: `:SwiftBuildAndDebugTests`
+4. LLDB will automatically use the correct `.xctest` bundle
 
 ---
 
@@ -839,9 +871,18 @@ Swift Environment Validation
 ### Debug
 - `:SwiftDebug` - Start debugging session
 - `:SwiftBuildAndDebug` - Build and start debugging
-- `:SwiftDebugArgs <args>` - Set program arguments
-- `:SwiftDebugClearArgs` - Clear debug arguments
-- `:SwiftDebugUI` - Toggle debug UI (requires nvim-dap-ui)
+- `:SwiftBuildAndDebugTests` - Build tests and start debugging (.xctest)
+- `:SwiftDebugStop` - Stop debugging session
+- `:SwiftDebugContinue` - Continue execution
+- `:SwiftDebugStepOver` - Step over
+- `:SwiftDebugStepInto` - Step into
+- `:SwiftDebugStepOut` - Step out
+- `:SwiftBreakpointToggle` - Toggle breakpoint at current line
+- `:SwiftBreakpointClear` - Clear all breakpoints
+- `:SwiftDebugVariables` - Show local variables
+- `:SwiftDebugBacktrace` - Show call stack
+- `:SwiftDebugCommand <cmd>` - Send custom LLDB command
+- `:SwiftDebugUI` - Toggle debug output window
 
 ### Xcode (macOS only)
 - `:SwiftXcodeBuild [scheme]` - Build Xcode project

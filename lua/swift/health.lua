@@ -318,50 +318,39 @@ function M.check()
   end
 
   -- Check Debugger
-  health.start("Debugger (nvim-dap)")
+  health.start("Debugger (LLDB)")
   if config.is_feature_enabled("debugger") then
     local debugger_ok, debugger = pcall(require, "swift.features.debugger")
     if debugger_ok then
       local info = debugger.get_health_info()
 
-      -- Check nvim-dap
-      if info.has_dap then
-        health.ok("nvim-dap found")
+      -- Check LLDB
+      if info.lldb_path then
+        health.ok("LLDB found")
+        health.info("Path: " .. info.lldb_path)
 
-        -- Check lldb-dap/lldb-vscode
-        if info.lldb_path then
-          health.ok("lldb-dap/lldb-vscode found")
-          health.info("Path: " .. info.lldb_path)
-
-          if info.configured then
-            health.ok("Swift debugging is configured")
-            health.info("Use :SwiftDebug to start debugging")
-            health.info("Use :SwiftBuildAndDebug to build and debug")
-          else
-            health.info("Swift debugging not configured (auto_setup disabled)")
-          end
+        if info.configured then
+          health.ok("Swift debugging is configured")
+          health.info("Use :SwiftDebug to start debugging")
+          health.info("Use :SwiftBuildAndDebug to build and debug")
+          health.info("Use :SwiftBreakpointToggle to toggle breakpoints")
+          health.info("Use :SwiftDebugUI to toggle debug output window")
         else
-          health.warn("lldb-dap/lldb-vscode not found")
-          if vim.fn.has("mac") == 1 then
-            health.info("Install Xcode Command Line Tools or lldb-dap")
-          else
-            health.info("Install lldb-dap from your package manager")
-          end
+          health.info("Swift debugging not configured")
         end
 
-        -- Check for nvim-dap-ui (optional)
-        local dapui_ok = pcall(require, "dapui")
-        if dapui_ok then
-          health.ok("nvim-dap-ui found")
-          health.info("Use :SwiftDebugUI to toggle debug UI")
-        else
-          health.info("nvim-dap-ui not found (optional, but recommended)")
-          health.info("Install: 'rcarriga/nvim-dap-ui'")
+        if info.is_running then
+          health.ok("Debug session is currently running")
         end
       else
-        health.warn("nvim-dap not found")
-        health.info("Install: 'mfussenegger/nvim-dap'")
-        health.info("Debugging features will not work without nvim-dap")
+        health.warn("LLDB not found")
+        if vim.fn.has("mac") == 1 then
+          health.info("Install Xcode Command Line Tools")
+          health.info("Or install Swift toolchain from swift.org")
+        else
+          health.info("Install LLDB from your package manager")
+          health.info("Usually comes with Swift toolchain")
+        end
       end
     end
   else
