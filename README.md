@@ -1,8 +1,15 @@
 # swift.nvim
 
-A comprehensive, modular Neovim plugin for Swift development with LSP, build tools, formatting, linting, and more.
+A comprehensive, modular Neovim plugin for Swift development with LSP, build tools, formatting, linting, and **integrated LLDB debugger** (no nvim-dap required).
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+## 📚 Documentation
+
+- **🚀 [Getting Started](GETTING_STARTED.md)** - Quick 3-step setup guide
+- **📘 [Complete Documentation](DOCUMENTATION.md)** - Everything in one place
+- **⚡ [Minimal Config](MINIMAL_CONFIG.lua)** - Simple setup (30 lines)
+- **🔧 [Full Config](FULL_CONFIG.lua)** - All options (450 lines)
 
 ---
 
