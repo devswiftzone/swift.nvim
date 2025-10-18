@@ -52,4 +52,18 @@ function M.get_buffer_dir()
   return vim.fn.fnamemodify(filepath, ":p:h")
 end
 
+-- Logging utility
+function M.log(message, level)
+  level = level or "info"
+  local levels = {
+    info = vim.log.levels.INFO,
+    warn = vim.log.levels.WARN,
+    error = vim.log.levels.ERROR,
+    debug = vim.log.levels.DEBUG,
+  }
+
+  local log_level = levels[level] or vim.log.levels.INFO
+  vim.notify(message, log_level, { title = "swift.nvim" })
+end
+
 return M
