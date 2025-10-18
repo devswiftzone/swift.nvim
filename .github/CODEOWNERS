@@ -1,0 +1,26 @@
+# Code Owners for swift.nvim
+# These users will be automatically requested for review when someone opens a pull request.
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owners for everything in the repo
+* @devswiftzone
+
+# Documentation
+*.md @devswiftzone
+/docs/ @devswiftzone
+
+# Core plugin files
+/lua/swift/ @devswiftzone
+/plugin/ @devswiftzone
+
+# Configuration and examples
+/examples/ @devswiftzone
+*.lua @devswiftzone
+
+# GitHub specific files
+/.github/ @devswiftzone
+
+# Community health files
+/CODE_OF_CONDUCT.md @devswiftzone
+/CONTRIBUTING.md @devswiftzone
+/SECURITY.md @devswiftzone

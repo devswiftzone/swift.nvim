@@ -1,0 +1,40 @@
+name: Greetings
+
+on: [pull_request_target, issues]
+
+jobs:
+  greeting:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/first-interaction@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          issue-message: |
+            👋 Hey there! Thanks for opening your first issue in **swift.nvim**!
+
+            A maintainer will take a look and respond as soon as possible.
+
+            In the meantime:
+            - Make sure you've filled out all sections of the issue template
+            - Run `:checkhealth swift` and include the output if relevant
+            - Check the [documentation](https://github.com/devswiftzone/swift.nvim#-documentation) for common solutions
+
+            We appreciate your contribution to making swift.nvim better! 🚀
+          pr-message: |
+            👋 Thanks for opening your first pull request in **swift.nvim**!
+
+            A maintainer will review your contribution soon.
+
+            Please make sure:
+            - [ ] You've filled out the PR template completely
+            - [ ] All CI checks pass
+            - [ ] You've added tests if applicable
+            - [ ] Documentation has been updated if needed
+            - [ ] Your commits follow the project's commit message style
+
+            We appreciate your contribution! 🎉
+
+            **New to open source?** Check out our [Contributing Guide](https://github.com/devswiftzone/swift.nvim/blob/main/CONTRIBUTING.md) for tips.
