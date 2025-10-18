@@ -5,6 +5,6 @@ return {
   {
     "devswiftzone/swift.nvim",
     ft = "swift",
-    opts = {},  -- Use all defaults
+    opts = {}, -- Use all defaults
   },
 }
