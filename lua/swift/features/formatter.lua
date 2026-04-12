@@ -130,6 +130,8 @@ function M.format_with_swift_format(bufnr)
     table.insert(cmd, config_file)
   end
 
+  table.insert(cmd, "-")
+
   local result = vim.fn.system(cmd, content)
   local exit_code = vim.v.shell_error
 
