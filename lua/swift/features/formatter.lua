@@ -224,14 +224,72 @@ function M.format_selection()
     return
   end
 
-  -- For now, format the whole buffer
-  -- TODO: Implement proper range formatting
-  vim.notify(
-    "Formatting whole buffer (range formatting not yet implemented)",
-    vim.log.levels.INFO,
-    { title = "swift.nvim" }
-  )
-  M.format()
+  if formatter ~= M.FormatterType.SWIFT_FORMAT then
+    -- NOTE: Range formatting is currently only supported when swift-format is specified,
+    -- so fall back to formatting the whole buffer.
+    vim.notify(
+      "Range formatting is only supported with swift-format. Formatting whole buffer instead.",
+      vim.log.levels.INFO,
+      { title = "swift.nvim" }
+    )
+    M.format()
+    return
+  end
+
+  local swift_format = M.find_swift_format()
+  if not swift_format then
+    vim.notify("swift-format not found", vim.log.levels.ERROR, { title = "swift.nvim" })
+    return
+  end
+
+  local bufnr = vim.api.nvim_get_current_buf()
+
+  -- Get line numbers of the visual selection (1-indexed)
+  local start_line = vim.fn.getpos("'<")[2]
+  local end_line = vim.fn.getpos("'>")[2]
+
+  -- Get the whole buffer content (swift-format requires the entire file)
+  local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+  local content = table.concat(lines, "\n")
+
+  -- Calculate UTF-8 byte offsets for the selected range
+  local start_offset = 0
+  for i = 1, start_line - 1 do
+    start_offset = start_offset + #lines[i] + 1 -- +1 for newline
+  end
+  local end_offset = start_offset
+  for i = start_line, end_line do
+    end_offset = end_offset + #lines[i] + 1 -- +1 for newline
+  end
+
+  local cmd = { swift_format }
+
+  local config_file = M.find_config_file(M.FormatterType.SWIFT_FORMAT)
+  if config_file then
+    table.insert(cmd, "--configuration")
+    table.insert(cmd, config_file)
+  end
+
+  table.insert(cmd, "--offsets")
+  table.insert(cmd, start_offset .. ":" .. end_offset)
+  table.insert(cmd, "-")
+
+  local result = vim.fn.system(cmd, content)
+  local exit_code = vim.v.shell_error
+
+  if exit_code ~= 0 then
+    vim.notify("swift-format failed: " .. result, vim.log.levels.ERROR, { title = "swift.nvim" })
+    return
+  end
+
+  local new_lines = vim.split(result, "\n")
+
+  -- Remove trailing empty line
+  if new_lines[#new_lines] == "" then
+    table.remove(new_lines)
+  end
+
+  vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, new_lines)
 end
 
 -- Setup format on save
@@ -256,7 +314,7 @@ function M.setup_commands()
 
   vim.api.nvim_create_user_command("SwiftFormatSelection", function()
     M.format_selection()
-  end, { desc = "Format Swift selection" })
+  end, { desc = "Format Swift selection", range = true })
 end
 
 -- Get formatter info
