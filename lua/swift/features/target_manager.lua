@@ -20,10 +20,11 @@ function M.parse_spm_targets()
   end
 
   -- First, try using swift package dump-package (most reliable)
-  local cmd = string.format('cd "%s" && swift package dump-package 2>/dev/null', project_info.root)
-  local output = vim.fn.system(cmd)
+  local sh_cmd = { "sh", "-c", string.format('cd "%s" && swift package dump-package 2>/dev/null', project_info.root) }
+  local obj = vim.system(sh_cmd, { text = true, timeout = 5000 }):wait()
+  local output = obj.stdout or ""
 
-  if vim.v.shell_error == 0 and output ~= "" then
+  if obj.code == 0 and output ~= "" then
     -- Parse JSON output
     local ok, package_data = pcall(vim.json.decode, output)
     if ok and package_data and package_data.targets then
@@ -139,10 +140,11 @@ function M.parse_xcode_targets()
   end
 
   -- Use xcodebuild to list schemes (which correspond to targets)
-  local cmd = string.format('cd "%s" && xcodebuild -list -json 2>/dev/null', vim.fn.fnamemodify(project_file, ":h"))
-  local output = vim.fn.system(cmd)
+  local sh_cmd = { "sh", "-c", string.format('cd "%s" && xcodebuild -list -json 2>/dev/null', vim.fn.fnamemodify(project_file, ":h")) }
+  local obj = vim.system(sh_cmd, { text = true, timeout = 5000 }):wait()
+  local output = obj.stdout or ""
 
-  if vim.v.shell_error ~= 0 then
+  if obj.code ~= 0 then
     return nil
   end
 

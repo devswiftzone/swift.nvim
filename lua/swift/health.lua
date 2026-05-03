@@ -82,7 +82,7 @@ function M.check()
         end
       end
     else
-      local version = vim.fn.system("swift --version 2>&1 | head -n 1")
+      local version = vim.system({ "sh", "-c", "swift --version 2>&1 | head -n 1" }, { text = true, timeout = 5000 }):wait().stdout or ""
       health.info("Version: " .. vim.trim(version))
     end
   else

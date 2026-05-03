@@ -148,13 +148,17 @@ function M.list_schemes()
     project_file = info.project
   end
 
-  local cmd = string.format(
-    "xcodebuild -list -workspace %s 2>/dev/null || xcodebuild -list -project %s 2>/dev/null",
-    vim.fn.shellescape(project_file),
-    vim.fn.shellescape(project_file)
-  )
+  local sh_cmd = {
+    "sh", "-c",
+    string.format(
+      "xcodebuild -list -workspace %s 2>/dev/null || xcodebuild -list -project %s 2>/dev/null",
+      vim.fn.shellescape(project_file),
+      vim.fn.shellescape(project_file)
+    )
+  }
 
-  local output = vim.fn.system(cmd)
+  local obj = vim.system(sh_cmd, { text = true, timeout = 5000 }):wait()
+  local output = obj.stdout or ""
   local schemes = {}
   local in_schemes = false
 
@@ -272,7 +276,7 @@ function M.open_in_xcode()
     file_to_open = info.project
   end
 
-  vim.fn.system("open " .. vim.fn.shellescape(file_to_open))
+  vim.system({ "open", file_to_open })
   vim.notify("Opening in Xcode.app", vim.log.levels.INFO, { title = "swift.nvim" })
 end
 

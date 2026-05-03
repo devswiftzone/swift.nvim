@@ -132,11 +132,13 @@ function M.format_with_swift_format(bufnr)
 
   table.insert(cmd, "-")
 
-  local result = vim.fn.system(cmd, content)
-  local exit_code = vim.v.shell_error
+  local obj = vim.system(cmd, { text = true, stdin = content, timeout = 5000 }):wait()
+  local result = obj.stdout or ""
+  local exit_code = obj.code
 
   if exit_code ~= 0 then
-    vim.notify("swift-format failed: " .. result, vim.log.levels.ERROR, { title = "swift.nvim" })
+    local err_msg = obj.stderr or result
+    vim.notify("swift-format failed: " .. err_msg, vim.log.levels.ERROR, { title = "swift.nvim" })
     return false
   end
 
@@ -179,11 +181,13 @@ function M.format_with_swiftformat(bufnr)
     table.insert(cmd, config_file)
   end
 
-  local result = vim.fn.system(cmd)
-  local exit_code = vim.v.shell_error
+  local obj = vim.system(cmd, { text = true, timeout = 5000 }):wait()
+  local result = obj.stdout or ""
+  local exit_code = obj.code
 
   if exit_code ~= 0 then
-    vim.notify("swiftformat failed: " .. result, vim.log.levels.ERROR, { title = "swift.nvim" })
+    local err_msg = obj.stderr or result
+    vim.notify("swiftformat failed: " .. err_msg, vim.log.levels.ERROR, { title = "swift.nvim" })
     return false
   end
 
@@ -274,11 +278,13 @@ function M.format_selection()
   table.insert(cmd, start_offset .. ":" .. end_offset)
   table.insert(cmd, "-")
 
-  local result = vim.fn.system(cmd, content)
-  local exit_code = vim.v.shell_error
+  local obj = vim.system(cmd, { text = true, stdin = content, timeout = 5000 }):wait()
+  local result = obj.stdout or ""
+  local exit_code = obj.code
 
   if exit_code ~= 0 then
-    vim.notify("swift-format failed: " .. result, vim.log.levels.ERROR, { title = "swift.nvim" })
+    local err_msg = obj.stderr or result
+    vim.notify("swift-format failed: " .. err_msg, vim.log.levels.ERROR, { title = "swift.nvim" })
     return
   end
 
