@@ -61,6 +61,10 @@ jobs:
           nvim --version
           nvim --headless -c "checkhealth swift" -c "quit" || true
 
+      - name: Run Unit Tests
+        run: |
+          nvim --headless -u tests/minimal_init.lua -c "PlenaryBustedDirectory tests/ { minimal_init = 'tests/minimal_init.lua' }"
+
   labeler:
     name: Auto Label
     runs-on: ubuntu-latest
