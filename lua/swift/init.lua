@@ -12,6 +12,11 @@ function M.setup(opts)
   local features = require("swift.features")
   features.load()
 
+  -- Load integrations
+  pcall(function()
+    require("swift.integrations.dap").setup()
+  end)
+
   -- Setup commands
   M.setup_commands()
 
@@ -58,6 +63,16 @@ function M.setup_commands()
       "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     )
   end, { desc = "Show Swift version info" })
+
+  vim.api.nvim_create_user_command("SwiftTelescopeSchemes", function()
+    local telescope = require("swift.integrations.telescope")
+    telescope.xcode_schemes()
+  end, { desc = "Select Xcode Scheme with Telescope" })
+
+  vim.api.nvim_create_user_command("SwiftTelescopeTargets", function()
+    local telescope = require("swift.integrations.telescope")
+    telescope.swift_targets()
+  end, { desc = "Select Swift Target with Telescope" })
 end
 
 function M.setup_autocmds()
