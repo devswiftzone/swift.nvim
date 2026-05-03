@@ -63,19 +63,8 @@ function M.check()
         -- Check swiftly
         if vim.fn.executable("swiftly") == 1 then
           health.ok("swiftly found (Swift version manager)")
-          local versions = validator.list_swiftly_versions()
-          if versions and #versions > 0 then
-            local current = nil
-            for _, v in ipairs(versions) do
-              if v.current then
-                current = v.version
-                break
-              end
-            end
-            if current then
-              health.info("Current swiftly version: " .. current)
-            end
-          end
+          -- NOTE: Skipping swiftly list to avoid blocking checkhealth
+          health.info("Run :SwiftVersionInfo for version details")
         else
           health.info("swiftly not found (optional, but recommended)")
           health.info("Install: curl -L https://swift-server.github.io/swiftly/swiftly-install.sh | bash")
@@ -251,29 +240,9 @@ function M.check()
     local tm_ok, target_manager = pcall(require, "swift.features.target_manager")
     if tm_ok then
       health.ok("Target manager available")
-
-      -- Check if we can detect targets
-      local targets = target_manager.get_targets()
-      if #targets > 0 then
-        health.ok(string.format("Found %d target(s)", #targets))
-
-        local current = target_manager.get_current_target()
-        if current then
-          health.info("Current target: " .. current)
-        end
-
-        -- Show target types
-        local type_counts = {}
-        for _, target in ipairs(targets) do
-          type_counts[target.type] = (type_counts[target.type] or 0) + 1
-        end
-
-        for target_type, count in pairs(type_counts) do
-          health.info(string.format("  %s: %d", target_type, count))
-        end
-      else
-        health.info("No targets found (open a Swift project to see targets)")
-      end
+      -- NOTE: Skipping target detection here to avoid blocking checkhealth
+      -- (xcodebuild -list and swift package dump-package can be very slow)
+      health.info("Run :SwiftTargets to list targets for the current project")
     end
   else
     health.info("Target manager feature is disabled")
