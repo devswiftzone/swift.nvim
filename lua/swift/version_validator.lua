@@ -94,9 +94,10 @@ end
 
 -- Get installed Swift version
 function M.get_installed_swift_version()
-  local output = vim.system({ "sh", "-c", "swift --version 2>&1" }, { text = true, timeout = 5000 }):wait().stdout or ""
+  local obj = vim.system({ "sh", "-c", "swift --version 2>&1" }, { text = true, timeout = 5000 }):wait()
+  local output = obj.stdout or ""
 
-  if vim.v.shell_error ~= 0 then
+  if obj.code ~= 0 then
     return nil
   end
 
@@ -142,9 +143,10 @@ function M.list_swiftly_versions()
     return nil
   end
 
-  local output = vim.system({ "sh", "-c", "swiftly list 2>/dev/null" }, { text = true, timeout = 5000 }):wait().stdout or ""
+  local obj = vim.system({ "sh", "-c", "swiftly list 2>/dev/null" }, { text = true, timeout = 5000 }):wait()
+  local output = obj.stdout or ""
 
-  if vim.v.shell_error ~= 0 then
+  if obj.code ~= 0 then
     return nil
   end
 
@@ -198,9 +200,10 @@ function M.get_swift_format_version()
     return nil
   end
 
-  local output = vim.system({ "sh", "-c", swift_format .. " --version 2>&1" }, { text = true, timeout = 5000 }):wait().stdout or ""
+  local obj = vim.system({ "sh", "-c", swift_format .. " --version 2>&1" }, { text = true, timeout = 5000 }):wait()
+  local output = obj.stdout or ""
 
-  if vim.v.shell_error ~= 0 then
+  if obj.code ~= 0 then
     return nil
   end
 
