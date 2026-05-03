@@ -140,23 +140,34 @@ function M.detect_project(force)
     root = nil,
   }
 
-  -- Priority order: workspace > project > spm
-  -- Xcode workspace (highest priority)
+  -- Gather all possible project types
+  local candidates = {}
+  
   local workspace_info = M.detect_xcode_workspace(start_path)
-  if workspace_info then
-    project_info = workspace_info
-  else
-    -- Xcode project
-    local project = M.detect_xcode_project(start_path)
-    if project then
-      project_info = project
-    else
-      -- Swift Package Manager
-      local spm = M.detect_spm(start_path)
-      if spm then
-        project_info = spm
+  if workspace_info then table.insert(candidates, workspace_info) end
+  
+  local project_info_xcode = M.detect_xcode_project(start_path)
+  if project_info_xcode then table.insert(candidates, project_info_xcode) end
+  
+  local spm_info = M.detect_spm(start_path)
+  if spm_info then table.insert(candidates, spm_info) end
+
+  if #candidates > 0 then
+    -- Sort candidates by root path length descending (closer to start_path)
+    -- If lengths are equal, preserve priority: workspace > project > spm
+    table.sort(candidates, function(a, b)
+      if #a.root == #b.root then
+        local priority = {
+          [M.ProjectType.XCODE_WORKSPACE] = 3,
+          [M.ProjectType.XCODE_PROJECT] = 2,
+          [M.ProjectType.SPM] = 1,
+        }
+        return (priority[a.type] or 0) > (priority[b.type] or 0)
       end
-    end
+      return #a.root > #b.root
+    end)
+    
+    project_info = candidates[1]
   end
 
   -- Cache the result
