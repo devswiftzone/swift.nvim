@@ -15,7 +15,7 @@ function M.check()
   end
 
   -- Check configuration
-  local config = require("swift.config")
+  local config = require("swift.core.config")
   if config.get() then
     health.ok("Configuration loaded")
   else

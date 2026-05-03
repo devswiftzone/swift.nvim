@@ -91,7 +91,7 @@ function M.find_config_file(formatter_type)
     return config.config_file
   end
 
-  local utils = require("swift.utils")
+  local utils = require("swift.core.utils")
 
   if formatter_type == M.FormatterType.SWIFT_FORMAT then
     -- Look for .swift-format

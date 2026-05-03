@@ -1,6 +1,6 @@
 local M = {}
 
-local config = require("swift.config")
+local config = require("swift.core.config")
 
 function M.setup(opts)
   opts = opts or {}

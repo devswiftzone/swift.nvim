@@ -1,6 +1,6 @@
 local M = {}
 
-local utils = require("swift.utils")
+local utils = require("swift.core.utils")
 
 -- Parse version string to table {major, minor, patch}
 function M.parse_version(version_string)
