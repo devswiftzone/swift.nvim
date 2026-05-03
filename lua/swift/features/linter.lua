@@ -45,7 +45,7 @@ function M.find_config_file()
     return config.config_file
   end
 
-  local utils = require("swift.utils")
+  local utils = require("swift.core.utils")
 
   -- Look for .swiftlint.yml or .swiftlint.yaml
   local yml = utils.find_file_upwards(".swiftlint.yml")

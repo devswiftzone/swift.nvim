@@ -1,6 +1,6 @@
 local M = {}
 
-local config = require("swift.config")
+local config = require("swift.core.config")
 
 -- Check if LuaSnip is available
 function M.is_luasnip_available()

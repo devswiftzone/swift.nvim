@@ -1,6 +1,6 @@
 local M = {}
 
-local utils = require("swift.utils")
+local utils = require("swift.core.utils")
 local config = {}
 
 -- Build output buffer

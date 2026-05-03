@@ -1,7 +1,7 @@
 local M = {}
 
-local utils = require("swift.utils")
-local config = require("swift.config")
+local utils = require("swift.core.utils")
+local config = require("swift.core.config")
 
 -- Cache for targets
 M._cache = {
