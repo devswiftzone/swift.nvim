@@ -231,10 +231,6 @@ function M.check()
         local xcode_ok, xcode = pcall(require, "swift.features.xcode")
         if xcode_ok and xcode.is_xcode_project() then
           health.ok("Xcode project detected")
-          local schemes = xcode.list_schemes()
-          if #schemes > 0 then
-            health.info("Schemes: " .. table.concat(schemes, ", "))
-          end
         else
           health.info("Not in an Xcode project")
         end
