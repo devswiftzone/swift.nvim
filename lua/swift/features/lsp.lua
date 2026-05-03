@@ -124,17 +124,22 @@ function M.default_on_attach(client, bufnr)
   vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, opts)
   vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, opts)
 
-  -- Inlay hints
+  -- Inlay hints (requires Neovim 0.10+)
   if config.inlay_hints and client.server_capabilities.inlayHintProvider then
-    if vim.lsp.inlay_hint then
+    if vim.fn.has("nvim-0.10") == 1 and vim.lsp.inlay_hint then
       vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
     end
   end
 
-  -- Semantic tokens
+  -- Semantic tokens (enabled by default in Neovim 0.9+)
   if config.semantic_tokens and client.server_capabilities.semanticTokensProvider then
-    -- Semantic tokens are enabled by default in Neovim 0.9+
+    -- Semantic tokens are handled automatically by Neovim
   end
+
+  -- Toggle inlay hints command (buffer-local)
+  vim.api.nvim_buf_create_user_command(bufnr, "SwiftToggleInlayHints", function()
+    M.toggle_inlay_hints(bufnr)
+  end, { desc = "Toggle Swift inlay hints" })
 
   -- Call user's on_attach if provided
   if config.on_attach then
@@ -214,6 +219,22 @@ function M.get_lsp_config()
   }
 end
 
+-- Toggle inlay hints for a buffer
+function M.toggle_inlay_hints(bufnr)
+  bufnr = bufnr or vim.api.nvim_get_current_buf()
+
+  if vim.fn.has("nvim-0.10") == 0 or not vim.lsp.inlay_hint then
+    vim.notify("Inlay hints require Neovim 0.10+", vim.log.levels.WARN, { title = "swift.nvim" })
+    return
+  end
+
+  local enabled = vim.lsp.inlay_hint.is_enabled({ bufnr = bufnr })
+  vim.lsp.inlay_hint.enable(not enabled, { bufnr = bufnr })
+
+  local state = not enabled and "enabled" or "disabled"
+  vim.notify("Inlay hints " .. state, vim.log.levels.INFO, { title = "swift.nvim" })
+end
+
 -- Restart LSP server
 function M.restart()
   vim.cmd("LspRestart sourcekit")
@@ -221,7 +242,8 @@ end
 
 -- Get LSP client info
 function M.get_client()
-  local clients = vim.lsp.get_active_clients({ name = "sourcekit" })
+  local get_clients = vim.lsp.get_clients or vim.lsp.get_active_clients
+  local clients = get_clients({ name = "sourcekit" })
   return clients[1]
 end
 
