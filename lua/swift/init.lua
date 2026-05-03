@@ -73,6 +73,11 @@ function M.setup_commands()
     local telescope = require("swift.integrations.telescope")
     telescope.swift_targets()
   end, { desc = "Select Swift Target with Telescope" })
+
+  vim.api.nvim_create_user_command("SwiftToggleInlayHints", function()
+    local lsp = require("swift.features.lsp")
+    lsp.toggle_inlay_hints()
+  end, { desc = "Toggle inlay hints for current buffer (Neovim 0.10+)" })
 end
 
 function M.setup_autocmds()
