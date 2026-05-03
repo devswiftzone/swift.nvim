@@ -116,8 +116,8 @@ function M.lint_file(filename)
     table.insert(cmd, config_file)
   end
 
-  local result = vim.fn.system(cmd)
-  return M.parse_swiftlint_output(result)
+  local obj = vim.system(cmd, { text = true, timeout = 5000 }):wait()
+  return M.parse_swiftlint_output(obj.stdout or "")
 end
 
 -- Lint current buffer
@@ -201,8 +201,9 @@ function M.fix(filename)
     table.insert(cmd, config_file)
   end
 
-  local result = vim.fn.system(cmd)
-  local exit_code = vim.v.shell_error
+  local obj = vim.system(cmd, { text = true, timeout = 5000 }):wait()
+  local result = obj.stdout or ""
+  local exit_code = obj.code
 
   -- Reload buffer to see changes
   vim.cmd("silent! edit!")

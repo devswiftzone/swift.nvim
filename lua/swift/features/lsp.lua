@@ -38,7 +38,8 @@ function M.find_sourcekit_lsp()
 
   -- Try Xcode toolchain
   if vim.fn.has("mac") == 1 then
-    local xcrun_path = vim.fn.system("xcrun --find sourcekit-lsp 2>/dev/null"):gsub("\n", "")
+    local xcrun_path = vim.system({ "xcrun", "--find", "sourcekit-lsp" }, { text = true }):wait().stdout or ""
+    xcrun_path = xcrun_path:gsub("\n", "")
     if xcrun_path ~= "" and vim.fn.executable(xcrun_path) == 1 then
       table.insert(possible_paths, 1, xcrun_path)
     end
