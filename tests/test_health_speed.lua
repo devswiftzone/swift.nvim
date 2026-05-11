@@ -42,10 +42,22 @@ time_call("swift-format --version (via validator.is_formatter_compatible)", func
   return v.is_formatter_compatible()
 end)
 
--- 4. project detection (only file stat, should be instant)
-time_call("project detection (get_project_info)", function()
+-- 4a. Project detection — xcworkspace scan (was the culprit)
+time_call("detect_xcode_workspace (find_pattern_upwards *.xcworkspace)", function()
   local d = require("swift.features.project_detector")
-  return d.get_project_info()
+  return d.detect_xcode_workspace(vim.fn.getcwd())
+end)
+
+-- 4b. Project detection — xcodeproj scan
+time_call("detect_xcode_project  (find_pattern_upwards *.xcodeproj)", function()
+  local d = require("swift.features.project_detector")
+  return d.detect_xcode_project(vim.fn.getcwd())
+end)
+
+-- 4c. Project detection — SPM (io.open Package.swift, fast)
+time_call("detect_spm            (find_file_upwards Package.swift)", function()
+  local d = require("swift.features.project_detector")
+  return d.detect_spm(vim.fn.getcwd())
 end)
 
 -- 5. lsp.status() — should be instant (just checks active clients)
