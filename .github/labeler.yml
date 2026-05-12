@@ -1,45 +1,69 @@
 # Labeler configuration for automatic PR labeling
-# https://github.com/actions/labeler
+# https://github.com/actions/labeler (v5 format)
 
 documentation:
-  - '**/*.md'
-  - 'docs/**/*'
-  - 'examples/**/*.md'
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/*.md'
+      - 'docs/**/*'
+      - 'examples/**/*.md'
 
 ci:
-  - '.github/workflows/**'
-  - '.github/**/*.yml'
+  - changed-files:
+    - any-glob-to-any-file:
+      - '.github/workflows/**'
+      - '.github/**/*.yml'
 
 core:
-  - 'lua/swift/init.lua'
-  - 'lua/swift/config.lua'
-  - 'plugin/**'
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'lua/swift/init.lua'
+      - 'lua/swift/core/**'
+      - 'plugin/**'
 
 feature:lsp:
-  - 'lua/swift/features/lsp.lua'
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'lua/swift/features/lsp.lua'
 
 feature:debugger:
-  - 'lua/swift/features/debugger.lua'
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'lua/swift/features/debugger.lua'
 
 feature:formatter:
-  - 'lua/swift/features/formatter.lua'
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'lua/swift/features/formatter.lua'
 
 feature:linter:
-  - 'lua/swift/features/linter.lua'
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'lua/swift/features/linter.lua'
 
 feature:build:
-  - 'lua/swift/features/build_runner.lua'
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'lua/swift/features/build_runner.lua'
 
 feature:xcode:
-  - 'lua/swift/features/xcode.lua'
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'lua/swift/features/xcode.lua'
 
 feature:targets:
-  - 'lua/swift/features/target_manager.lua'
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'lua/swift/features/target_manager.lua'
 
 tests:
-  - 'tests/**'
-  - '**/*_spec.lua'
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'tests/**'
+      - '**/*_spec.lua'
 
-dependencies:
-  - 'package.json'
-  - '.github/workflows/**'
+bug:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'lua/swift/health.lua'
+      - 'lua/swift/core/utils.lua'

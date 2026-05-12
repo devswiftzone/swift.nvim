@@ -38,6 +38,7 @@ jobs:
           use-quiet-mode: 'yes'
           use-verbose-mode: 'no'
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          config-file: '.github/markdown-link-check.json'
         continue-on-error: true
 
   test:
