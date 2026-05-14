@@ -19,7 +19,7 @@ function M.setup()
     dap.adapters.lldb = {
       type = "executable",
       command = command,
-      name = "lldb"
+      name = "lldb",
     }
   end
 
@@ -35,7 +35,7 @@ function M.setup()
           local current = target_manager.get_current_target()
           local detector = require("swift.features.project_detector")
           local info = detector.get_project_info()
-          
+
           if current and info.root and info.type == "spm" then
             -- Guess the build path for SPM
             local path = info.root .. "/.build/debug/" .. current
@@ -43,12 +43,12 @@ function M.setup()
               return path
             end
           end
-          
+
           return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
         end,
         cwd = "${workspaceFolder}",
         stopOnEntry = false,
-      }
+      },
     }
   end
 end

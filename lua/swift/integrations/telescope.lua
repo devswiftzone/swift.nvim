@@ -21,23 +21,25 @@ function M.xcode_schemes()
     return
   end
 
-  pickers.new({}, {
-    prompt_title = "Xcode Schemes",
-    finder = finders.new_table({
-      results = schemes
-    }),
-    sorter = conf.generic_sorter({}),
-    attach_mappings = function(prompt_bufnr, map)
-      actions.select_default:replace(function()
-        actions.close(prompt_bufnr)
-        local selection = action_state.get_selected_entry()
-        if selection then
-          xcode.build(selection[1])
-        end
-      end)
-      return true
-    end,
-  }):find()
+  pickers
+    .new({}, {
+      prompt_title = "Xcode Schemes",
+      finder = finders.new_table({
+        results = schemes,
+      }),
+      sorter = conf.generic_sorter({}),
+      attach_mappings = function(prompt_bufnr, map)
+        actions.select_default:replace(function()
+          actions.close(prompt_bufnr)
+          local selection = action_state.get_selected_entry()
+          if selection then
+            xcode.build(selection[1])
+          end
+        end)
+        return true
+      end,
+    })
+    :find()
 end
 
 -- Show a Telescope picker for Swift targets (SPM)
@@ -71,30 +73,32 @@ function M.swift_targets()
     })
   end
 
-  pickers.new({}, {
-    prompt_title = "Swift Targets",
-    finder = finders.new_table({
-      results = display_items,
-      entry_maker = function(entry)
-        return {
-          value = entry.value,
-          display = entry.display,
-          ordinal = entry.ordinal,
-        }
-      end
-    }),
-    sorter = conf.generic_sorter({}),
-    attach_mappings = function(prompt_bufnr, map)
-      actions.select_default:replace(function()
-        actions.close(prompt_bufnr)
-        local selection = action_state.get_selected_entry()
-        if selection then
-          target_manager.set_current_target(selection.value.name)
-        end
-      end)
-      return true
-    end,
-  }):find()
+  pickers
+    .new({}, {
+      prompt_title = "Swift Targets",
+      finder = finders.new_table({
+        results = display_items,
+        entry_maker = function(entry)
+          return {
+            value = entry.value,
+            display = entry.display,
+            ordinal = entry.ordinal,
+          }
+        end,
+      }),
+      sorter = conf.generic_sorter({}),
+      attach_mappings = function(prompt_bufnr, map)
+        actions.select_default:replace(function()
+          actions.close(prompt_bufnr)
+          local selection = action_state.get_selected_entry()
+          if selection then
+            target_manager.set_current_target(selection.value.name)
+          end
+        end)
+        return true
+      end,
+    })
+    :find()
 end
 
 return M

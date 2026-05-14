@@ -149,12 +149,13 @@ function M.list_schemes()
   end
 
   local sh_cmd = {
-    "sh", "-c",
+    "sh",
+    "-c",
     string.format(
       "xcodebuild -list -workspace %s 2>/dev/null || xcodebuild -list -project %s 2>/dev/null",
       vim.fn.shellescape(project_file),
       vim.fn.shellescape(project_file)
-    )
+    ),
   }
 
   local obj = vim.system(sh_cmd, { text = true, timeout = 5000 }):wait()
