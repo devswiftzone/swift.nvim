@@ -140,7 +140,11 @@ function M.parse_xcode_targets()
   end
 
   -- Use xcodebuild to list schemes (which correspond to targets)
-  local sh_cmd = { "sh", "-c", string.format('cd "%s" && xcodebuild -list -json 2>/dev/null', vim.fn.fnamemodify(project_file, ":h")) }
+  local sh_cmd = {
+    "sh",
+    "-c",
+    string.format('cd "%s" && xcodebuild -list -json 2>/dev/null', vim.fn.fnamemodify(project_file, ":h")),
+  }
   local obj = vim.system(sh_cmd, { text = true, timeout = 5000 }):wait()
   local output = obj.stdout or ""
 

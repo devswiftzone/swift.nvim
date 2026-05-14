@@ -39,7 +39,9 @@ function M.find_pattern_upwards(pattern, start_path)
       if handle then
         while true do
           local name, ftype = vim.uv.fs_scandir_next(handle)
-          if not name then break end
+          if not name then
+            break
+          end
           if (ftype == "directory" or ftype == "link") and name:sub(-#suffix) == suffix then
             table.insert(matches, path .. "/" .. name)
           end
