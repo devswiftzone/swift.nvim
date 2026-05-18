@@ -93,16 +93,15 @@ function M.load()
     end
   end
 
-  -- Add more features here as they are implemented
-  -- Example:
-  -- if config.is_feature_enabled("your_feature") then
-  --   local ok, your_feature = pcall(require, "swift.features.your_feature")
-  --   if ok then
-  --     your_feature.setup(config.get_feature("your_feature"))
-  --   else
-  --     vim.notify("Failed to load your_feature: " .. tostring(your_feature), vim.log.levels.ERROR)
-  --   end
-  -- end
+  -- Load preview_panel if enabled
+  if config.is_feature_enabled("preview_panel") then
+    local ok, preview_panel = pcall(require, "swift.features.preview_panel")
+    if ok then
+      preview_panel.setup(config.get_feature("preview_panel"))
+    else
+      vim.notify("Failed to load preview_panel: " .. tostring(preview_panel), vim.log.levels.ERROR)
+    end
+  end
 end
 
 return M
