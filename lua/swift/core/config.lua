@@ -69,6 +69,14 @@ local defaults = {
       show_console = true, -- Show console output
       wait_for_debugger = false, -- Wait for debugger to attach
     },
+    preview_panel = {
+      enabled = true,
+      position = "right", -- "right" | "left" | "bottom"
+      width = 40,
+      auto_open = false, -- Auto open when #Preview is detected
+      server_port = 8080, -- Port for the interactive preview server
+      open_browser = true, -- Open default browser automatically
+    },
     -- Add more features here as they are implemented
   },
   log_level = "info",
